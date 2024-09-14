@@ -1,0 +1,16 @@
+{
+  "name": "chatter",
+  "version": "1.0.0",
+  "engines": {
+    "node": "<your_node_version>"
+  },
+  "scripts": {
+    "clear": "rm -rf public/",
+    "build": "npm install --prefix client/ && npm run build --prefix client/",
+    "deploy": "npm run clear && cp -a client/dist/. public/",
+    "build-deploy": "npm run build && npm run deploy"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

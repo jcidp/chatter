@@ -9,6 +9,7 @@ Rails.application.routes.draw do
       resource :email_verification, only: [:show, :create]
       resource :password_reset,     only: [:new, :edit, :create, :update]
     end
+    resource :current_user, only: [:show]
   end
 
   get "up" => "rails/health#show", as: :rails_health_check

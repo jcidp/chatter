@@ -6,6 +6,7 @@ import {
 import App from "./App";
 import AuthProvider, { useAuth } from "./helpers/AuthProvider";
 import { useEffect } from "react";
+import Login from "./pages/Login";
 
 const RouterWrapper = () => {
   const { isAuthenticated } = useAuth();
@@ -22,19 +23,11 @@ const Router = () => {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: (
-        <AuthProvider>
-          <RouterWrapper />
-        </AuthProvider>
-      ),
+      element: <RouterWrapper />,
     },
     {
       path: "/login",
-      element: (
-        <div>
-          <h1>Sign In</h1>
-        </div>
-      ),
+      element: <Login />,
     },
     {
       path: "/sign_up",
@@ -46,7 +39,11 @@ const Router = () => {
     },
   ]);
 
-  return <RouterProvider router={router} />;
+  return (
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
+  );
 };
 
 export default Router;

@@ -1,7 +1,5 @@
 class Api::CurrentUsersController < ApplicationController
   def show
-    render json: Current.user.as_json(
-      only: [:email]
-    )
+    render json: Current.user
   end
 end

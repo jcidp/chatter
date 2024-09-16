@@ -23,11 +23,14 @@ class Api::SessionsController < ApplicationController
   end
 
   def destroy
-    @session.destroy
+    if @session
+      @session.destroy
+    end
+    render json: { message: 'Logged out successfully' }, status: :ok
   end
 
   private
     def set_session
-      @session = Current.user.sessions.find(params[:id])
+      @session = Current.session
     end
 end

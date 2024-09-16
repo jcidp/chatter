@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   namespace :api, :defaults => {:format => :json} do
     post "login", to: "sessions#create"
-    post "logout", to: "sessions#destroy"
+    delete "logout", to: "sessions#destroy"
     post "sign_up", to: "registrations#create"
     resources :sessions, only: [:index, :show, :destroy]
     resource  :password, only: [:edit, :update]

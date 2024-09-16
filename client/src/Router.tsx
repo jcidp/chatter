@@ -8,6 +8,7 @@ import AuthProvider, { useAuth } from "./helpers/AuthProvider";
 import { useEffect } from "react";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
+import Footer from "./components/Footer";
 
 const RouterWrapper = () => {
   const { isAuthenticated } = useAuth();
@@ -39,6 +40,7 @@ const Router = () => {
   return (
     <AuthProvider>
       <RouterProvider router={router} />
+      <Footer />
     </AuthProvider>
   );
 };

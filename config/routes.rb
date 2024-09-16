@@ -11,6 +11,7 @@ Rails.application.routes.draw do
       resource :password_reset,     only: [:new, :edit, :create, :update]
     end
     resource :current_user, only: [:show]
+    resources :chats, only: [:index, :show, :create]
   end
 
   get "up" => "rails/health#show", as: :rails_health_check

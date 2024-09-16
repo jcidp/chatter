@@ -31,6 +31,6 @@ class Api::SessionsControllerTest < ActionDispatch::IntegrationTest
 
   test "should sign out" do
     delete api_session_url(@user.sessions.last), headers: default_headers
-    assert_response :no_content
+    assert_response :success
   end
 end

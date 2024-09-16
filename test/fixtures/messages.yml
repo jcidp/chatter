@@ -3,9 +3,9 @@
 one:
   text: MyText
   chat: one
-  user: one
+  author: lazaro_nixon
 
 two:
   text: MyText
-  chat: two
-  user: two
+  chat: one
+  author: john_smith

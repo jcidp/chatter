@@ -1,50 +1,16 @@
-import { useEffect, useState } from "react";
-import { useAuth } from "../helpers/AuthProvider";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import AccountForm from "../components/AccountForm";
 
 const Login = () => {
-  const { isAuthenticated, login } = useAuth();
-  const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
-  useEffect(() => {
-    if (isAuthenticated) navigate("/");
-  }, [isAuthenticated]);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    login(email, password);
-  };
-
   return (
-    <>
-      <h1>Login</h1>
-      <form onSubmit={handleSubmit}>
-        <label htmlFor="email">Email:</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          required
-          autoFocus
-          placeholder="example@email.com"
-          onChange={(e) => setEmail(e.target.value)}
-        ></input>
-        <label htmlFor="password">Password:</label>
-        <input
-          type="password"
-          id="password"
-          name="password"
-          required
-          placeholder="********"
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button>Login</button>
-      </form>
+    <main className="self-center">
+      <h1 className="text-xl mb-4">Login</h1>
+      <AccountForm />
       <span>Don't have an account, yet? </span>
-      <Link to="/sign_up">Sign up</Link>
-    </>
+      <Link to="/sign_up" className="text-blue-700 underline">
+        Sign up
+      </Link>
+    </main>
   );
 };
 

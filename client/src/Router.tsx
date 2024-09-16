@@ -7,6 +7,7 @@ import App from "./App";
 import AuthProvider, { useAuth } from "./helpers/AuthProvider";
 import { useEffect } from "react";
 import Login from "./pages/Login";
+import SignUp from "./pages/SignUp";
 
 const RouterWrapper = () => {
   const { isAuthenticated } = useAuth();
@@ -31,11 +32,7 @@ const Router = () => {
     },
     {
       path: "/sign_up",
-      element: (
-        <div>
-          <h1>Sign Up</h1>
-        </div>
-      ),
+      element: <SignUp />,
     },
   ]);
 

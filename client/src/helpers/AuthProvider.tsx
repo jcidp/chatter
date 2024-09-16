@@ -4,6 +4,11 @@ import ApiClient from "./ApiClient";
 
 interface AuthContextType {
   user: User | null;
+  signUp: (
+    email: string,
+    password: string,
+    passwordConfirmation: string,
+  ) => Promise<void>;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   isAuthenticated: boolean;
@@ -33,6 +38,19 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     initAuth();
   }, []);
 
+  const signUp = async (
+    email: string,
+    password: string,
+    passwordConfirmation: string,
+  ) => {
+    const userData = await ApiClient.signUp(
+      email,
+      password,
+      passwordConfirmation,
+    );
+    setUser(userData);
+  };
+
   const login = async (email: string, password: string) => {
     const userData = await ApiClient.login(email, password);
     setUser(userData);
@@ -45,6 +63,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const value = {
     user,
+    signUp,
     login,
     logout,
     isAuthenticated: !!user,

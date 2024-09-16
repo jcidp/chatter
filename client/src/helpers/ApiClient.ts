@@ -53,6 +53,27 @@ class ApiClient {
     delete this.axiosInstance.defaults.headers.common["Authorization"];
   }
 
+  public async signUp(
+    email: string,
+    password: string,
+    passwordConfirmation: string,
+  ): Promise<User> {
+    try {
+      const response: AxiosResponse = await this.axiosInstance.post("sign_up", {
+        email,
+        password,
+        passwordConfirmation,
+      });
+      const user = response.data;
+      if (!response.headers) throw Error("No headers");
+      const token = response.headers.get("X-Session-Token");
+      this.setToken(token);
+      return user;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   public async login(email: string, password: string): Promise<User> {
     try {
       const response: AxiosResponse = await this.axiosInstance.post("/login", {
@@ -87,8 +108,6 @@ class ApiClient {
       throw error;
     }
   }
-
-  // Add other API methods as needed
 }
 
 export default ApiClient.getInstance();

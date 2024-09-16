@@ -1,12 +1,13 @@
-import { useEffect, useState } from "react";
-import { useAuth } from "../helpers/AuthProvider";
 import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../helpers/AuthProvider";
+import { useEffect, useState } from "react";
 
-const Login = () => {
-  const { isAuthenticated, login } = useAuth();
+const SignUp = () => {
+  const { isAuthenticated, signUp } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordConfirmation, setPasswordConfirmation] = useState("");
 
   useEffect(() => {
     if (isAuthenticated) navigate("/");
@@ -14,7 +15,7 @@ const Login = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    login(email, password);
+    signUp(email, password, passwordConfirmation);
   };
 
   return (
@@ -40,12 +41,21 @@ const Login = () => {
           placeholder="********"
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button>Login</button>
+        <label htmlFor="confirm-password">Confirm Password:</label>
+        <input
+          type="password"
+          id="confirm-password"
+          name="confirm-password"
+          required
+          placeholder="********"
+          onChange={(e) => setPasswordConfirmation(e.target.value)}
+        />
+        <button>Sign up</button>
       </form>
-      <span>Don't have an account, yet? </span>
-      <Link to="/sign_up">Sign up</Link>
+      <span>Already have an account? </span>
+      <Link to="/login">Login</Link>
     </>
   );
 };
 
-export default Login;
+export default SignUp;

@@ -11,10 +11,11 @@ class User < ApplicationRecord
   has_many :sessions, dependent: :destroy
   has_many :chat_users
   has_many :chats, through: :chat_users
+  has_many :messages, inverse_of: "author"
 
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :password, allow_nil: true, length: { minimum: 12 }
-  validates :username, presence: true
+  validates :username, presence: true, length: { maximum: 24 }
   validates :bio, length: { maximum: 80 }
 
   normalizes :email, with: -> { _1.strip.downcase }

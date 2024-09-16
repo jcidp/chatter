@@ -1,6 +1,6 @@
 interface User {
   email: string;
-  // Add other user properties as needed
+  username: string;
 }
 
 export type { User };

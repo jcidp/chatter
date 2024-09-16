@@ -1,6 +1,9 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../helpers/AuthProvider";
 import { useEffect, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 interface AccountFormProps {
   isSignUp?: boolean;
@@ -27,50 +30,47 @@ const AccountForm = ({ isSignUp }: AccountFormProps) => {
   };
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="grid grid-cols-1 my-4 border rounded px-2 py-4 gap-y-2 md:min-w-96"
-    >
-      <label>
-        Email
-        <input
-          type="email"
+    <form onSubmit={handleSubmit} className="grid gap-4">
+      <div className="grid gap-2">
+        <Label htmlFor="email">Email</Label>
+        <Input
           id="email"
-          name="email"
+          type="email"
           required
           autoFocus
-          placeholder="example@email.com"
+          placeholder="m@example.com"
           onChange={(e) => setEmail(e.target.value)}
-          className="block"
-        ></input>
-      </label>
-      <label htmlFor="password">
-        Password
-        <input
-          type="password"
+        />
+      </div>
+      <div className="grid gap-2">
+        <div className="flex items-center">
+          <Label htmlFor="password">Password</Label>
+        </div>
+        <Input
           id="password"
-          name="password"
+          type="password"
           required
           placeholder="********"
           onChange={(e) => setPassword(e.target.value)}
-          className="block"
         />
-      </label>
+      </div>
       {isSignUp && (
-        <label htmlFor="confirm-password">
-          Confirm Password
-          <input
+        <div className="grid gap-2">
+          <div className="flex items-center">
+            <Label htmlFor="password-confirmation">Password</Label>
+          </div>
+          <Input
+            id="password-confirmation"
             type="password"
-            id="confirm-password"
-            name="confirm-password"
             required
             placeholder="********"
             onChange={(e) => setPasswordConfirmation(e.target.value)}
-            className="block"
           />
-        </label>
+        </div>
       )}
-      <button>{isSignUp ? "Sign up" : "Login"}</button>
+      <Button type="submit" className="w-full">
+        {isSignUp ? "Sign up" : "Login"}
+      </Button>
     </form>
   );
 };

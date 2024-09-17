@@ -20,8 +20,15 @@ class Api::ChatsControllerTest < ActionDispatch::IntegrationTest
 
   test "should get show" do
     @chat = chats(:one)
+    @chat.messages.create(text: "last message", user_id: @user.id)
+    @messages = @chat.messages.sorted.as_json
+    expected_response = {
+      id: @chat.id,
+      name: "jon1234",
+      messages: @messages
+    }
     get api_chat_url(@chat), headers: default_headers
-    assert_equal @chat.to_json, @response.body
+    assert_equal expected_response.to_json, @response.body
   end
 
   test "should get create" do

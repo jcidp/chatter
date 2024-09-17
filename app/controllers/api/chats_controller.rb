@@ -1,13 +1,15 @@
 class Api::ChatsController < ApplicationController
   def index
     render json: Current.user.chats.ordered.as_json(
-      only: [:id],
       current_user: Current.user
     )
   end
 
   def show
-    render json: Current.user.chats.find(params[:id])
+    render json: Current.user.chats.find(params[:id]).as_json(
+      include: :messages,
+      current_user: Current.user
+    )
   end
 
   def create

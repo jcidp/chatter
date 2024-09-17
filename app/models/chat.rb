@@ -9,7 +9,10 @@ class Chat < ApplicationRecord
   
   def as_json(options={})
     current_user = options.delete(:current_user)
-    super(options).merge(name: name(current_user))
+    include_messages = options.delete(:include) == :messages
+    json = super({ only: :id }.merge(options)).merge(name: name(current_user))
+    json["messages"] = messages.sorted.map { |message| message.as_json } if include_messages
+    json
   end
 
   def last_message_at

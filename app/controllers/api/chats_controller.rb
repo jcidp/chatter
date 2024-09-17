@@ -1,6 +1,9 @@
 class Api::ChatsController < ApplicationController
   def index
-    render json: Current.user.chats
+    render json: Current.user.chats.ordered.as_json(
+      only: [:id],
+      current_user: Current.user
+    )
   end
 
   def show

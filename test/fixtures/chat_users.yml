@@ -11,3 +11,7 @@ two:
 three:
   user: lazaro_nixon
   chat: two
+
+four:
+  user: john_smith
+  chat: two

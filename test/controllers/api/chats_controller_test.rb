@@ -11,7 +11,11 @@ class Api::ChatsControllerTest < ActionDispatch::IntegrationTest
 
   test "should get index" do
     get api_chats_url, headers: default_headers
-    assert_equal @user.chats.to_json, @response.body
+    expected_response = [
+      {id: @user.chats[0].id, name: "jon1234"},
+      {id: @user.chats[1].id, name: "jon1234"},
+    ]
+    assert_equal expected_response.to_json, @response.body
   end
 
   test "should get show" do

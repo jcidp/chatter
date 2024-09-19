@@ -57,7 +57,7 @@ const AccountForm = ({ isSignUp }: AccountFormProps) => {
       {isSignUp && (
         <div className="grid gap-2">
           <div className="flex items-center">
-            <Label htmlFor="password-confirmation">Password</Label>
+            <Label htmlFor="password-confirmation">Confirm Password</Label>
           </div>
           <Input
             id="password-confirmation"

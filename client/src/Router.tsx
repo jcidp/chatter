@@ -11,6 +11,7 @@ import SignUp from "./pages/SignUp";
 import Chats from "./pages/Chats";
 import Layout from "./Layout";
 import Footer from "./components/Footer";
+import ErrorPage from "./pages/ErrorPage";
 
 const ProtectedRoutes = () => {
   const { isAuthenticated } = useAuth();
@@ -48,7 +49,7 @@ const Router = () => {
       ],
       errorElement: (
         <>
-          TBD
+          <ErrorPage />
           <Footer />
         </>
       ),

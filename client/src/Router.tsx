@@ -1,27 +1,24 @@
 import {
   createBrowserRouter,
+  Navigate,
   RouterProvider,
-  useNavigate,
 } from "react-router-dom";
 import App from "./App";
 import { useAuth } from "./helpers/AuthProvider";
-import { useEffect } from "react";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import Chats from "./pages/Chats";
 import Layout from "./Layout";
 import Footer from "./components/Footer";
 import ErrorPage from "./pages/ErrorPage";
+import { ReactNode } from "react";
 
-const ProtectedRoutes = () => {
+const ProtectedRoutes = ({ children }: { children?: ReactNode }) => {
   const { isAuthenticated } = useAuth();
-  const navigate = useNavigate();
 
-  useEffect(() => {
-    if (!isAuthenticated) navigate("/login");
-  }, [isAuthenticated]);
+  if (!isAuthenticated) return <Navigate to="/login" />;
 
-  return <App />;
+  return children;
 };
 
 const Router = () => {
@@ -32,7 +29,11 @@ const Router = () => {
       children: [
         {
           path: "/",
-          element: <ProtectedRoutes />,
+          element: (
+            <ProtectedRoutes>
+              <App />
+            </ProtectedRoutes>
+          ),
           children: [
             { index: true, element: <Chats /> },
             { path: "/chats/:id", element: <p>TBD</p> },

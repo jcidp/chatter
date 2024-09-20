@@ -4,13 +4,15 @@ import {
   useNavigate,
 } from "react-router-dom";
 import App from "./App";
-import AuthProvider, { useAuth } from "./helpers/AuthProvider";
+import { useAuth } from "./helpers/AuthProvider";
 import { useEffect } from "react";
 import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
+import Chats from "./pages/Chats";
+import Layout from "./Layout";
 import Footer from "./components/Footer";
 
-const RouterWrapper = () => {
+const ProtectedRoutes = () => {
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
 
@@ -25,24 +27,35 @@ const Router = () => {
   const router = createBrowserRouter([
     {
       path: "/",
-      element: <RouterWrapper />,
-    },
-    {
-      path: "/login",
-      element: <Login />,
-    },
-    {
-      path: "/sign_up",
-      element: <SignUp />,
+      element: <Layout />,
+      children: [
+        {
+          path: "/",
+          element: <ProtectedRoutes />,
+          children: [
+            { index: true, element: <Chats /> },
+            { path: "/chats/:id", element: <p>TBD</p> },
+          ],
+        },
+        {
+          path: "/login",
+          element: <Login />,
+        },
+        {
+          path: "/sign_up",
+          element: <SignUp />,
+        },
+      ],
+      errorElement: (
+        <>
+          TBD
+          <Footer />
+        </>
+      ),
     },
   ]);
 
-  return (
-    <AuthProvider>
-      <RouterProvider router={router} />
-      <Footer />
-    </AuthProvider>
-  );
+  return <RouterProvider router={router} />;
 };
 
 export default Router;

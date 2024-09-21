@@ -128,6 +128,21 @@ class ApiClient {
       throw error;
     }
   }
+
+  public async postMessage(chatId: string, text: string) {
+    try {
+      const response: AxiosResponse = await this.axiosInstance.post(
+        "/messages",
+        {
+          chat_id: chatId,
+          text,
+        },
+      );
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export default ApiClient.getInstance();

@@ -26,16 +26,21 @@ const Chat = () => {
     getChat();
   }, []);
 
-  const handleSendMessage = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(`Sending: "${text}"`);
-    setText("");
+    const chatId = location.pathname.split("/")[2];
+    try {
+      await ApiClient.postMessage(chatId, text);
+      setText("");
+    } catch (error) {
+      console.log("Unable to send message...");
+    }
   };
 
   return (
     <div className="grid grid-rows-[max-content_1fr]">
       <div>
-        <Card className="flex items-center gap-4 p-2">
+        <Card className="flex items-center gap-4 p-2 rounded-sm">
           <Link to="/">
             <span>&#8592;</span>
           </Link>
@@ -46,7 +51,7 @@ const Chat = () => {
           {chatName}
         </Card>
       </div>
-      <div className="bg-secondary flex flex-col-reverse p-2">
+      <div className="bg-secondary flex flex-col-reverse p-2 gap-1">
         {messages && messages.length > 0 ? (
           messages.map((message) => (
             <Card
@@ -63,7 +68,7 @@ const Chat = () => {
         )}
       </div>
       <form
-        className="grid grid-cols-[1fr_max-content] gap-x-2"
+        className="grid grid-cols-[1fr_max-content] gap-x-2 mt-2 rounded"
         onSubmit={handleSendMessage}
       >
         <Input
@@ -79,9 +84,9 @@ const Chat = () => {
             viewBox="0 0 24 24"
             fill="none"
             stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
             className="lucide lucide-send h-4 w-4"
           >
             <path d="m22 2-7 20-4-9-9-4Z"></path>

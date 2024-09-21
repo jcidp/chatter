@@ -10,7 +10,7 @@ function App() {
     <>
       <header>
         <div className="flex justify-between">
-          <h1 className="text-xl text-purple-700 inline">Hello, world!</h1>
+          <h1 className="text-xl text-blue-700 inline">Chatter</h1>
           <Button
             className="bg-secondary text-secondary-foreground"
             onClick={() => logout()}

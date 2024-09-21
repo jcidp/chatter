@@ -1,16 +1,19 @@
-import { Chat } from "@/types";
+import { ChatI } from "@/types";
 import { Card } from "./ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Link } from "react-router-dom";
 
-const ChatCard = ({ name }: Pick<Chat, "name">) => {
+const ChatCard = ({ id, name }: ChatI) => {
   return (
-    <Card className="flex items-center gap-4 p-2">
-      <Avatar>
-        <AvatarImage src="https://github.com/shadcn.png" />
-        <AvatarFallback>CN</AvatarFallback>
-      </Avatar>
-      {name}
-    </Card>
+    <Link to={`/chats/${id}`}>
+      <Card className="flex items-center gap-4 p-2">
+        <Avatar>
+          <AvatarImage src="https://github.com/shadcn.png" />
+          <AvatarFallback>CN</AvatarFallback>
+        </Avatar>
+        {name}
+      </Card>
+    </Link>
   );
 };
 

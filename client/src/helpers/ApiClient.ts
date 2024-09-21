@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
-import { Chat, User } from "../types";
+import { ChatI, User } from "../types";
 
 const TOKEN_KEY = "auth_token";
 
@@ -109,9 +109,20 @@ class ApiClient {
     }
   }
 
-  public async getChats(): Promise<Chat[]> {
+  public async getChats(): Promise<ChatI[]> {
     try {
       const response: AxiosResponse = await this.axiosInstance.get("/chats");
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  public async getChat(id: string): Promise<ChatI> {
+    try {
+      const response: AxiosResponse = await this.axiosInstance.get(
+        `/chats/${id}`,
+      );
       return response.data;
     } catch (error) {
       throw error;

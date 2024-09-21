@@ -12,6 +12,7 @@ import Layout from "./Layout";
 import Footer from "./components/Footer";
 import ErrorPage from "./pages/ErrorPage";
 import { ReactNode } from "react";
+import Chat from "./pages/Chat";
 
 const ProtectedRoutes = ({ children }: { children?: ReactNode }) => {
   const { isAuthenticated } = useAuth();
@@ -36,7 +37,7 @@ const Router = () => {
           ),
           children: [
             { index: true, element: <Chats /> },
-            { path: "/chats/:id", element: <p>TBD</p> },
+            { path: "/chats/:id", element: <Chat /> },
           ],
         },
         {

@@ -28,6 +28,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       if (token) {
         try {
           const userData = await ApiClient.getCurrentUser();
+          console.log(userData);
           setUser(userData);
         } catch (error) {
           localStorage.removeItem("auth_token");

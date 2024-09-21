@@ -19,7 +19,7 @@ function App() {
           </Button>
         </div>
       </header>
-      <main>
+      <main className="flex-1 grid auto-rows-fr">
         <Outlet />
       </main>
     </>

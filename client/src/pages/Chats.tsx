@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import ApiClient from "@/helpers/ApiClient";
-import { Chat } from "@/types";
+import { ChatI } from "@/types";
 import ChatCard from "@/components/ChatCard";
 import { Button } from "@/components/ui/button";
 
 function Chats() {
   const [isLoading, setIsLoading] = useState(true);
-  const [chats, setChats] = useState<Chat[] | null>(null);
+  const [chats, setChats] = useState<ChatI[] | null>(null);
 
   useEffect(() => {
     const getChats = async () => {
@@ -23,7 +23,9 @@ function Chats() {
     <main>
       <Button className="my-4 block">+ New chat</Button>
       <div className="grid gap-y-2">
-        {chats?.map((chat) => <ChatCard name={chat.name} key={chat.id} />)}
+        {chats?.map((chat) => (
+          <ChatCard id={chat.id} name={chat.name} key={chat.id} />
+        ))}
       </div>
     </main>
   );

@@ -1,9 +1,10 @@
 interface User {
+  id: number;
   email: string;
   username: string;
 }
 
-interface Chat {
+interface ChatI {
   id: string;
   name: string;
   messages?: Message[];
@@ -11,8 +12,8 @@ interface Chat {
 
 interface Message {
   created_at: string;
-  author: string;
+  user_id: number;
   text: string;
 }
 
-export type { User, Chat };
+export type { User, ChatI, Message };

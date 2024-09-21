@@ -3,10 +3,12 @@ import { Card, CardContent } from "@/components/ui/card";
 import ApiClient from "@/helpers/ApiClient";
 import { User } from "@/types";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Users = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [users, setUsers] = useState<User[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const getUsers = async () => {
@@ -23,8 +25,9 @@ const Users = () => {
     getUsers();
   }, []);
 
-  const handleClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    console.log(e.target);
+  const handleClick = async (userId: number) => {
+    const response = await ApiClient.createChat(userId);
+    navigate(`/chats/${response.id}`);
   };
 
   if (isLoading) return <h1>Loading...</h1>;
@@ -37,7 +40,7 @@ const Users = () => {
           <Card
             key={user.id}
             className="flex items-center"
-            onClick={handleClick}
+            onClick={() => handleClick(user.id)}
           >
             <CardContent className="flex items-center gap-2 p-1">
               <Avatar>

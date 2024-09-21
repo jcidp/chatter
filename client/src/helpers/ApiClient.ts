@@ -152,6 +152,17 @@ class ApiClient {
       throw error;
     }
   }
+
+  public async createChat(userId: number) {
+    try {
+      const response: AxiosResponse = await this.axiosInstance.post("/chats", {
+        user_id: userId,
+      });
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export default ApiClient.getInstance();

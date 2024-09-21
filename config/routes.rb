@@ -13,6 +13,7 @@ Rails.application.routes.draw do
     resource :current_user, only: [:show]
     resources :chats, only: [:index, :show, :create]
     resources :messages, only: [:create]
+    resources :users, only: [:index, :show]
   end
 
   get "up" => "rails/health#show", as: :rails_health_check

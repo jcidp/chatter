@@ -143,6 +143,15 @@ class ApiClient {
       throw error;
     }
   }
+
+  public async getUsers() {
+    try {
+      const response: AxiosResponse = await this.axiosInstance.get("/users");
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
+  }
 }
 
 export default ApiClient.getInstance();

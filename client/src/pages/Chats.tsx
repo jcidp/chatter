@@ -3,6 +3,7 @@ import ApiClient from "@/helpers/ApiClient";
 import { ChatI } from "@/types";
 import ChatCard from "@/components/ChatCard";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 function Chats() {
   const [isLoading, setIsLoading] = useState(true);
@@ -21,7 +22,9 @@ function Chats() {
 
   return (
     <main>
-      <Button className="my-4 block">+ New chat</Button>
+      <Link to="/users">
+        <Button className="my-4 block">+ New chat</Button>
+      </Link>
       <div className="grid gap-y-2">
         {chats?.map((chat) => (
           <ChatCard id={chat.id} name={chat.name} key={chat.id} />

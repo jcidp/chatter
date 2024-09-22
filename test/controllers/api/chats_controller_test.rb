@@ -31,9 +31,17 @@ class Api::ChatsControllerTest < ActionDispatch::IntegrationTest
     assert_equal expected_response.to_json, @response.body
   end
 
-  test "should get create" do
-    @other_user = users(:john_smith)
+  test "should create a new chat when it doesn't exist" do
+    @other_user = users(:jane_doe)
     assert_difference("Chat.count") do
+      post api_chats_url, params: { user_id: @other_user.id }, headers: default_headers
+    end
+    assert_equal [@other_user, @user], Chat.last.users.order(:id)
+  end
+
+  test "should not create a new chat if it already exists, and return it instead" do
+    @other_user = users(:john_smith)
+    assert_no_difference("Chat.count") do
       post api_chats_url, params: { user_id: @other_user.id }, headers: default_headers
     end
     assert_equal [@user, @other_user], Chat.last.users.order(:id)

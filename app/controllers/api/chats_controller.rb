@@ -15,11 +15,12 @@ class Api::ChatsController < ApplicationController
   def create
     @receiver = User.find(params[:user_id])
     if @receiver && Current.user
-      @chat = Chat.create!
-      @chat.chat_users.create!(user_id: @receiver.id)
-      @chat.chat_users.create!(user_id: Current.user.id)
-      
-      render json: @chat, status: :created
+      begin
+        @chat = Chat.find_or_create_by_users!(Current.user, @receiver)
+        render json: @chat, status: :created
+      rescue ActiveRecord::RecordInvalid => e
+        render json: { error: e.message }, status: :unprocessable_entity
+      end
     else
       render json: { message: "Invalid user" }, status: :unprocessable_entity
     end

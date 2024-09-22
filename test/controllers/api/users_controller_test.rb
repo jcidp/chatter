@@ -10,9 +10,8 @@ class Api::UsersControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "should get index" do
-    other_user = users(:john_smith)
     get api_users_url, headers: default_headers
-    assert_equal [other_user].to_json, @response.body
+    assert_equal [users(:john_smith), users(:jane_doe)].to_json, @response.body
   end
 
   # test "should get show" do

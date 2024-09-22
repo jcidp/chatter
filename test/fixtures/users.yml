@@ -11,3 +11,9 @@ john_smith:
   email: john.smith@email.com
   password_digest: <%= BCrypt::Password.create("Secret1*3*5*") %>
   verified: true
+
+jane_doe:
+  username: jane
+  email: jane@doe.com
+  password_digest:  <%= BCrypt::Password.create("Secret1*3*5*") %>
+  verified: true

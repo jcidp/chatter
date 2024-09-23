@@ -1,8 +1,10 @@
 class Api::MessagesController < ApplicationController
   def create
-    @message = Current.user.messages.build(chat_id: params[:chat_id], text: params[:text])
+    @chat = Current.user.chats.find(params[:chat_id])
+    @message = @chat.messages.build(user_id: Current.user.id, text: params[:text])
     if @message.save
-      render json: @message, status: :created
+      ChatChannel.broadcast_to(@chat, @message)
+      # render json: @message, status: :created
     else
       render json: { error: @message.errors }, status: :unprocessable_entity
     end

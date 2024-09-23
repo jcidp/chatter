@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  mount ActionCable.server => '/cable'
   namespace :api, :defaults => {:format => :json} do
     post "login", to: "sessions#create"
     delete "logout", to: "sessions#destroy"

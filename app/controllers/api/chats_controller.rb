@@ -13,7 +13,7 @@ class Api::ChatsController < ApplicationController
   end
 
   def create
-    @receiver = User.find(params[:user_id])
+    @receiver = User.find_by(id: params[:user_id])
     if @receiver && Current.user
       begin
         @chat = Chat.find_or_create_by_users!(Current.user, @receiver)

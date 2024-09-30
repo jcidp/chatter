@@ -1,5 +1,6 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
 import { ChatI, User } from "../types";
+import ActionCableManager from "./ActionCableManager";
 
 const TOKEN_KEY = "auth_token";
 
@@ -46,11 +47,13 @@ class ApiClient {
   public setToken(token: string): void {
     localStorage.setItem(TOKEN_KEY, token);
     this.setAuthHeader(token);
+    ActionCableManager.setToken(token);
   }
 
   public clearToken(): void {
     localStorage.removeItem(TOKEN_KEY);
     delete this.axiosInstance.defaults.headers.common["Authorization"];
+    ActionCableManager.clearToken();
   }
 
   public async signUp(

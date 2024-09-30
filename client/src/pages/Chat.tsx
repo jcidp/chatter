@@ -7,31 +7,68 @@ import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/helpers/AuthProvider";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Consumer, Subscription } from "@rails/actioncable";
+import ActionCableManager from "@/helpers/ActionCableManager";
 
 const Chat = () => {
   const location = useLocation();
-  const [messages, setMessages] = useState<Message[] | undefined>();
+  const [messages, setMessages] = useState<Message[]>([]);
   const [chatName, setChatName] = useState("");
   const [text, setText] = useState("");
+  const [subscription, setSubscription] =
+    useState<Subscription<Consumer> | null>(null);
   const { user } = useAuth();
 
   useEffect(() => {
+    console.log(
+      "Chat component mounted. chatId:",
+      location.pathname.split("/")[2],
+    );
     const getChat = async () => {
       const id = location.pathname.split("/")[2];
       const response = await ApiClient.getChat(id);
       console.log(response);
+      if (!response.messages) return;
       setMessages(response.messages);
       setChatName(response.name);
     };
     getChat();
   }, []);
 
-  const handleSendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
+  useEffect(() => {
+    if (!location.pathname) return;
+    const onReceived = (data: any) => {
+      if (data.type === "new_message") {
+        setMessages((prev) => [data.message, ...prev]);
+      }
+    };
+    const subscription = ActionCableManager.subscribeToChannel(
+      {
+        channel: "ChatChannel",
+        id: location.pathname.split("/")[2],
+      },
+      {
+        received: onReceived,
+      },
+    );
+    setSubscription(subscription);
+    return () => {
+      subscription?.unsubscribe();
+      console.log("Unsubscribing...");
+    };
+  }, [location]);
+
+  const handleSendMessage = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const chatId = location.pathname.split("/")[2];
     try {
-      await ApiClient.postMessage(chatId, text);
-      setText("");
+      if (text.trim() && subscription) {
+        subscription.perform("receive", {
+          text: text.trim(),
+          id: chatId,
+        });
+        setText("");
+      }
     } catch (error) {
       console.log("Unable to send message...");
     }

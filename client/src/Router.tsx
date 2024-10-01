@@ -1,7 +1,7 @@
 import {
   createBrowserRouter,
-  Navigate,
   RouterProvider,
+  useNavigate,
 } from "react-router-dom";
 import App from "./App";
 import { useAuth } from "./helpers/AuthProvider";
@@ -11,14 +11,17 @@ import Chats from "./pages/Chats";
 import Layout from "./Layout";
 import Footer from "./components/Footer";
 import ErrorPage from "./pages/ErrorPage";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 import Chat from "./pages/Chat";
 import Users from "./pages/Users";
 
 const ProtectedRoutes = ({ children }: { children?: ReactNode }) => {
   const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
-  if (!isAuthenticated) return <Navigate to="/login" />;
+  useEffect(() => {
+    if (!isAuthenticated) navigate("/login");
+  }, [isAuthenticated]);
 
   return children;
 };

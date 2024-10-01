@@ -20,12 +20,15 @@ class ApiClient {
     if (token) {
       this.setAuthHeader(token);
     }
+  }
 
+  public setInterceptors(handleUnauthorized: () => void) {
     this.axiosInstance.interceptors.response.use(
       (response) => response,
       (error) => {
         if (error.response && error.response.status === 401) {
           this.clearToken();
+          handleUnauthorized();
         }
         return Promise.reject(error);
       },
@@ -44,13 +47,13 @@ class ApiClient {
       `Bearer ${token}`;
   }
 
-  public setToken(token: string): void {
+  private setToken(token: string): void {
     localStorage.setItem(TOKEN_KEY, token);
     this.setAuthHeader(token);
     ActionCableManager.setToken(token);
   }
 
-  public clearToken(): void {
+  private clearToken(): void {
     localStorage.removeItem(TOKEN_KEY);
     delete this.axiosInstance.defaults.headers.common["Authorization"];
     ActionCableManager.clearToken();
@@ -61,110 +64,71 @@ class ApiClient {
     password: string,
     passwordConfirmation: string,
   ): Promise<User> {
-    try {
-      const response: AxiosResponse = await this.axiosInstance.post("sign_up", {
-        email,
-        password,
-        passwordConfirmation,
-      });
-      const user = response.data;
-      if (!response.headers) throw Error("No headers");
-      const token = response.headers.get("X-Session-Token");
-      this.setToken(token);
-      return user;
-    } catch (error) {
-      throw error;
-    }
+    const response: AxiosResponse = await this.axiosInstance.post("sign_up", {
+      email,
+      password,
+      passwordConfirmation,
+    });
+    const user = response.data;
+    if (!response.headers) throw Error("No headers");
+    const token = response.headers.get("X-Session-Token");
+    this.setToken(token);
+    return user;
   }
 
   public async login(email: string, password: string): Promise<User> {
-    try {
-      const response: AxiosResponse = await this.axiosInstance.post("/login", {
-        email,
-        password,
-      });
-      const user = response.data;
-      if (!response.headers) throw Error("No headers");
-      const token = response.headers.get("X-Session-Token");
-      this.setToken(token);
-      return user;
-    } catch (error) {
-      throw error;
-    }
+    const response: AxiosResponse = await this.axiosInstance.post("/login", {
+      email,
+      password,
+    });
+    const user = response.data;
+    if (!response.headers) throw Error("No headers");
+    const token = response.headers.get("X-Session-Token");
+    this.setToken(token);
+    return user;
   }
 
   public async logout(): Promise<void> {
-    try {
-      await this.axiosInstance.delete("/logout");
-      this.clearToken();
-    } catch (error) {
-      throw error;
-    }
+    await this.axiosInstance.delete("/logout");
+    this.clearToken();
   }
 
   public async getCurrentUser(): Promise<User> {
-    try {
-      const response: AxiosResponse =
-        await this.axiosInstance.get("/current_user");
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+    const response: AxiosResponse =
+      await this.axiosInstance.get("/current_user");
+    return response.data;
   }
 
   public async getChats(): Promise<ChatI[]> {
-    try {
-      const response: AxiosResponse = await this.axiosInstance.get("/chats");
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+    const response: AxiosResponse = await this.axiosInstance.get("/chats");
+    return response.data;
   }
 
   public async getChat(id: string): Promise<ChatI> {
-    try {
-      const response: AxiosResponse = await this.axiosInstance.get(
-        `/chats/${id}`,
-      );
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+    const response: AxiosResponse = await this.axiosInstance.get(
+      `/chats/${id}`,
+    );
+    return response.data;
   }
 
   public async postMessage(chatId: string, text: string) {
-    try {
-      const response: AxiosResponse = await this.axiosInstance.post(
-        "/messages",
-        {
-          chat_id: chatId,
-          text,
-        },
-      );
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+    const response: AxiosResponse = await this.axiosInstance.post("/messages", {
+      chat_id: chatId,
+      text,
+    });
+    return response.data;
   }
 
   public async getUsers() {
-    try {
-      const response: AxiosResponse = await this.axiosInstance.get("/users");
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+    const response: AxiosResponse = await this.axiosInstance.get("/users");
+    return response.data;
   }
 
   public async createChat(userId: number) {
-    try {
-      const response: AxiosResponse = await this.axiosInstance.post("/chats", {
-        user_id: userId,
-      });
-      return response.data;
-    } catch (error) {
-      throw error;
-    }
+    const response: AxiosResponse = await this.axiosInstance.post("/chats", {
+      user_id: userId,
+    });
+    return response.data;
   }
 }
 

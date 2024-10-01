@@ -24,6 +24,9 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     const initAuth = async () => {
+      ApiClient.setInterceptors(() => {
+        setUser(null);
+      });
       const token = localStorage.getItem("auth_token");
       if (token) {
         try {

@@ -22,7 +22,6 @@ const Chat = () => {
     const getChat = async () => {
       const id = location.pathname.split("/")[2];
       const response = await ApiClient.getChat(id);
-      console.log(response);
       if (!response.messages) return;
       setMessages(response.messages);
       setChatName(response.name);

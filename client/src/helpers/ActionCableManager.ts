@@ -1,11 +1,18 @@
 import { createConsumer, Subscription } from "@rails/actioncable";
 
+const TOKEN_KEY = "auth_token";
+
 class ActionCableManager {
   private static instance: ActionCableManager;
   private consumer: any;
   private token: string | null = null;
 
-  private constructor() {}
+  private constructor() {
+    const token = localStorage.getItem(TOKEN_KEY);
+    if (token) {
+      this.setToken(token);
+    }
+  }
 
   public static getInstance(): ActionCableManager {
     if (!ActionCableManager.instance) {

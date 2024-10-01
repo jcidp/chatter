@@ -7,7 +7,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/helpers/AuthProvider";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Consumer, Subscription } from "@rails/actioncable";
+import { Subscription } from "@rails/actioncable";
 import ActionCableManager from "@/helpers/ActionCableManager";
 
 const Chat = () => {
@@ -15,15 +15,10 @@ const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [chatName, setChatName] = useState("");
   const [text, setText] = useState("");
-  const [subscription, setSubscription] =
-    useState<Subscription<Consumer> | null>(null);
+  const [subscription, setSubscription] = useState<Subscription | null>(null);
   const { user } = useAuth();
 
   useEffect(() => {
-    console.log(
-      "Chat component mounted. chatId:",
-      location.pathname.split("/")[2],
-    );
     const getChat = async () => {
       const id = location.pathname.split("/")[2];
       const response = await ApiClient.getChat(id);
@@ -36,7 +31,7 @@ const Chat = () => {
   }, []);
 
   useEffect(() => {
-    if (!location.pathname) return;
+    if (!location.pathname || !user) return;
     const onReceived = (data: any) => {
       if (data.type === "new_message") {
         setMessages((prev) => [data.message, ...prev]);
@@ -54,9 +49,8 @@ const Chat = () => {
     setSubscription(subscription);
     return () => {
       subscription?.unsubscribe();
-      console.log("Unsubscribing...");
     };
-  }, [location]);
+  }, [location, user]);
 
   const handleSendMessage = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

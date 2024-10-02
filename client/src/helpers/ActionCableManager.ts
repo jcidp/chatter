@@ -5,12 +5,11 @@ const TOKEN_KEY = "auth_token";
 class ActionCableManager {
   private static instance: ActionCableManager;
   private consumer: any;
-  private token: string | null = null;
 
   private constructor() {
     const token = localStorage.getItem(TOKEN_KEY);
     if (token) {
-      this.setToken(token);
+      this.connect(token);
     }
   }
 
@@ -22,32 +21,32 @@ class ActionCableManager {
   }
 
   public setToken(token: string) {
-    this.token = token;
     this.disconnect();
-    this.connect();
+    this.connect(token);
   }
 
   public clearToken() {
-    this.token = null;
     this.disconnect();
   }
 
-  private connect() {
-    if (this.token) {
+  private connect(token: string) {
+    if (token) {
+      console.log("Connecting...");
       this.consumer = createConsumer(
-        `ws://localhost:3001/cable?token=${this.token}`,
+        `ws://localhost:3001/cable?token=${token}`,
       );
     }
   }
 
   private disconnect() {
     if (this.consumer) {
+      console.log("Disconnecting...");
       this.consumer.disconnect();
     }
   }
 
   public subscribeToChannel(
-    channel: object = {},
+    identifier: { id: string; channel: string },
     params: object = {},
   ): Subscription {
     if (!this.consumer) {
@@ -55,7 +54,8 @@ class ActionCableManager {
         "ActionCable not connected. Make sure to set a token first.",
       );
     }
-    return this.consumer.subscriptions.create(channel, params);
+    console.log("Subscribing...");
+    return this.consumer.subscriptions.create(identifier, params);
   }
 }
 

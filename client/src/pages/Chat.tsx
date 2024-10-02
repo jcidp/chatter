@@ -30,7 +30,7 @@ const Chat = () => {
   }, []);
 
   useEffect(() => {
-    if (!location.pathname || !user) return;
+    if (!location.pathname) return;
     const onReceived = (data: any) => {
       if (data.type === "new_message") {
         setMessages((prev) => [data.message, ...prev]);
@@ -47,9 +47,10 @@ const Chat = () => {
     );
     setSubscription(subscription);
     return () => {
+      console.log("Unsubscribing...");
       subscription?.unsubscribe();
     };
-  }, [location, user]);
+  }, [location]);
 
   const handleSendMessage = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

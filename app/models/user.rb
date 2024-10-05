@@ -12,6 +12,7 @@ class User < ApplicationRecord
   has_many :chat_users
   has_many :chats, through: :chat_users
   has_many :messages, inverse_of: "author"
+  has_one_attached :avatar
 
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :password, allow_nil: true, length: { minimum: 12 }
@@ -29,6 +30,10 @@ class User < ApplicationRecord
   end
 
   def as_json(options={})
-    super({ only: [:id, :email, :username] }.merge(options))
+    super({ only: [:id, :email, :username, :avatar] }.merge(options))
+  end
+
+  def avatar
+    rails_blob_path(object.avatar, only_path: true) if object.avatar.attached?
   end
 end

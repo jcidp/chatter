@@ -30,10 +30,8 @@ class User < ApplicationRecord
   end
 
   def as_json(options={})
-    super({ only: [:id, :email, :username, :avatar] }.merge(options))
-  end
-
-  def avatar
-    rails_blob_path(object.avatar, only_path: true) if object.avatar.attached?
+    super({
+      only: [:id, :email, :username],
+    }.merge(options))
   end
 end

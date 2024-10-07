@@ -5,5 +5,7 @@ class Api::UsersController < ApplicationController
   end
 
   def show
+    @user = User.find(:id)
+    render json: @user, status: :ok
   end
 end

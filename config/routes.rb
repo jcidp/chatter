@@ -11,10 +11,11 @@ Rails.application.routes.draw do
       resource :email_verification, only: [:show, :create]
       resource :password_reset,     only: [:new, :edit, :create, :update]
     end
-    resource :current_user, only: [:show]
+    resource :current_user, only: [:show, :update]
     resources :chats, only: [:index, :show, :create]
     resources :messages, only: [:create]
     resources :users, only: [:index, :show]
+    resource :avatar, only: [:update]
   end
 
   get "up" => "rails/health#show", as: :rails_health_check

@@ -14,6 +14,7 @@ import ErrorPage from "./pages/ErrorPage";
 import { ReactNode, useEffect } from "react";
 import Chat from "./pages/Chat";
 import Users from "./pages/Users";
+import Profile from "./pages/Profile";
 
 const ProtectedRoutes = ({ children }: { children?: ReactNode }) => {
   const { isAuthenticated } = useAuth();
@@ -43,6 +44,7 @@ const Router = () => {
             { index: true, element: <Chats /> },
             { path: "/chats/:id", element: <Chat /> },
             { path: "/users", element: <Users /> },
+            { path: "/profile", element: <Profile /> },
           ],
         },
         {

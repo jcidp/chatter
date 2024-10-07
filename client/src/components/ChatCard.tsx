@@ -9,7 +9,15 @@ const ChatCard = ({ id, name }: ChatI) => {
       <Card className="flex items-center gap-4 p-2">
         <Avatar>
           <AvatarImage src="https://github.com/shadcn.png" />
-          <AvatarFallback>CN</AvatarFallback>
+          <AvatarFallback>
+            {name
+              .split("")
+              .reduce(
+                (initials, char, i) =>
+                  i > 1 ? initials : initials + char.toUpperCase(),
+                "",
+              )}
+          </AvatarFallback>
         </Avatar>
         {name}
       </Card>

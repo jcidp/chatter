@@ -12,6 +12,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   isAuthenticated: boolean;
+  updateAvatar: (avatar: string) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -65,12 +66,18 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setUser(null);
   };
 
+  const updateAvatar = (avatar: string) => {
+    if (!user) return;
+    setUser({ ...user, avatar });
+  };
+
   const value = {
     user,
     signUp,
     login,
     logout,
     isAuthenticated: !!user,
+    updateAvatar,
   };
 
   if (isLoading) {

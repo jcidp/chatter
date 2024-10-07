@@ -130,6 +130,19 @@ class ApiClient {
     });
     return response.data;
   }
+
+  public async uploadAvatar(avatarFormData: FormData) {
+    const response: AxiosResponse = await this.axiosInstance.put(
+      "/avatar",
+      avatarFormData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      },
+    );
+    return response.data;
+  }
 }
 
 export default ApiClient.getInstance();

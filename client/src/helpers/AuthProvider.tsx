@@ -12,7 +12,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   isAuthenticated: boolean;
-  updateAvatar: (avatar: string) => void;
+  updateUser: (newUser: User) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -66,9 +66,8 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     setUser(null);
   };
 
-  const updateAvatar = (avatar: string) => {
-    if (!user) return;
-    setUser({ ...user, avatar });
+  const updateUser = (newUser: User) => {
+    setUser(newUser);
   };
 
   const value = {
@@ -77,7 +76,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     login,
     logout,
     isAuthenticated: !!user,
-    updateAvatar,
+    updateUser,
   };
 
   if (isLoading) {

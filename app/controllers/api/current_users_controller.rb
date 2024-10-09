@@ -6,6 +6,7 @@ class Api::CurrentUsersController < ApplicationController
   def update
     @user = Current.user
     @user.update!(user_params)
+    render json: @user, status: :ok
   end
 
   private

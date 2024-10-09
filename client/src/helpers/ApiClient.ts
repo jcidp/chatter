@@ -143,6 +143,14 @@ class ApiClient {
     );
     return response.data;
   }
+
+  public async updateCurrentUser(payload: { username?: string; bio?: string }) {
+    const response: AxiosResponse = await this.axiosInstance.put(
+      "/current_user",
+      payload,
+    );
+    return response.data;
+  }
 }
 
 export default ApiClient.getInstance();

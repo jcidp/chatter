@@ -9,11 +9,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Subscription } from "@rails/actioncable";
 import ActionCableManager from "@/helpers/ActionCableManager";
+import { UserRoundIcon } from "lucide-react";
 
 const Chat = () => {
   const location = useLocation();
   const [messages, setMessages] = useState<Message[]>([]);
-  const [chatName, setChatName] = useState("");
+  const [chatData, setChatData] = useState({ name: "", image: "" });
   const [text, setText] = useState("");
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const { user } = useAuth();
@@ -24,7 +25,7 @@ const Chat = () => {
       const response = await ApiClient.getChat(id);
       if (!response.messages) return;
       setMessages(response.messages);
-      setChatName(response.name);
+      setChatData({ name: response.name, image: response.image });
     };
     getChat();
   }, []);
@@ -76,10 +77,12 @@ const Chat = () => {
             <span>&#8592;</span>
           </Link>
           <Avatar>
-            <AvatarImage src="https://github.com/shadcn.png" />
-            <AvatarFallback>CN</AvatarFallback>
+            <AvatarImage src={chatData.image} alt={chatData.name} />
+            <AvatarFallback>
+              <UserRoundIcon />
+            </AvatarFallback>
           </Avatar>
-          {chatName}
+          {chatData.name}
         </Card>
       </div>
       <div className="bg-secondary flex flex-col-reverse p-2 gap-1">

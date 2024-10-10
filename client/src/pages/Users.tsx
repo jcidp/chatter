@@ -2,6 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import ApiClient from "@/helpers/ApiClient";
 import { User } from "@/types";
+import { UserRoundIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -44,11 +45,12 @@ const Users = () => {
           >
             <CardContent className="flex items-center gap-2 p-1">
               <Avatar>
-                <AvatarImage src="https://github.com/shadcn.png" />
-                <AvatarFallback>CN</AvatarFallback>
+                <AvatarImage src={user.avatar} alt={user.username} />
+                <AvatarFallback>
+                  <UserRoundIcon />
+                </AvatarFallback>
               </Avatar>
               <span>{user.username}</span>
-              <span>{user.email}</span>
             </CardContent>
           </Card>
         ))}

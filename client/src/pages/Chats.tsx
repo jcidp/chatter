@@ -26,9 +26,7 @@ function Chats() {
         <Button className="my-4 block">+ New chat</Button>
       </Link>
       <div className="grid gap-y-2">
-        {chats?.map((chat) => (
-          <ChatCard id={chat.id} name={chat.name} key={chat.id} />
-        ))}
+        {chats?.map((chat) => <ChatCard {...chat} key={chat.id} />)}
       </div>
     </main>
   );

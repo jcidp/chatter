@@ -10,6 +10,8 @@ interface ChatI {
   id: string;
   name: string;
   messages?: Message[];
+  last_message?: Omit<Message, "user_id">;
+  image: string;
 }
 
 interface Message {

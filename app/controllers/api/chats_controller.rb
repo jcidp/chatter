@@ -1,6 +1,7 @@
 class Api::ChatsController < ApplicationController
   def index
     render json: Current.user.chats.ordered.as_json(
+      methods: :last_message,
       current_user: Current.user
     )
   end

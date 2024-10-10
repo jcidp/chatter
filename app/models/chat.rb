@@ -17,6 +17,10 @@ class Chat < ApplicationRecord
     json
   end
 
+  def last_message
+    self.messages.last.as_json(only: [:text, :created_at])
+  end
+
   def last_message_at
     self.messages.last&.created_at
   end

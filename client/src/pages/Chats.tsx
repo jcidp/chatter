@@ -21,14 +21,14 @@ function Chats() {
   if (isLoading) return <h1>Loading...</h1>;
 
   return (
-    <main>
+    <div>
       <Link to="/users">
         <Button className="my-4 block">+ New chat</Button>
       </Link>
       <div className="grid gap-y-2">
         {chats?.map((chat) => <ChatCard {...chat} key={chat.id} />)}
       </div>
-    </main>
+    </div>
   );
 }
 

@@ -5,13 +5,34 @@ import { Textarea } from "@/components/ui/textarea";
 import ApiClient from "@/helpers/ApiClient";
 import { useAuth } from "@/helpers/AuthProvider";
 import { CameraIcon, CheckIcon, PencilIcon, XIcon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 const Profile = () => {
   const { user, updateUser } = useAuth();
+  const { id } = useParams();
   const [activeInput, setActiveInput] = useState("");
   const [username, setUsername] = useState(user?.username);
   const [bio, setBio] = useState(user?.bio);
+  const [profile, setProfile] = useState(user);
+
+  useEffect(() => {
+    if (!user) return;
+    if (!id || user.id === +id) {
+      setProfile(user);
+      setUsername(user.username);
+      setBio(user.bio);
+    } else {
+      const getUser = async () => {
+        console.log("Fetching");
+        const user = await ApiClient.getUser(id);
+        setProfile(user);
+        setUsername(user.username);
+        setBio(user.bio);
+      };
+      getUser();
+    }
+  }, [id]);
 
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
@@ -57,7 +78,7 @@ const Profile = () => {
     <div>
       <div className="relative">
         <Avatar className="w-52 h-52 mx-auto">
-          <AvatarImage src={user?.avatar} alt={user?.username} />
+          <AvatarImage src={profile?.avatar} alt={profile?.username} />
           <AvatarFallback>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -76,12 +97,14 @@ const Profile = () => {
             </svg>
           </AvatarFallback>
         </Avatar>
-        <div
-          className="absolute right-1/2 translate-x-24 bottom-0 bg-blue-400 p-4 rounded-full cursor-pointer"
-          onClick={() => handleActivateInput("avatar")}
-        >
-          {activeInput === "avatar" ? <XIcon /> : <CameraIcon />}
-        </div>
+        {(!id || user?.id === +id) && (
+          <div
+            className="absolute right-1/2 translate-x-24 bottom-0 bg-blue-400 p-4 rounded-full cursor-pointer"
+            onClick={() => handleActivateInput("avatar")}
+          >
+            {activeInput === "avatar" ? <XIcon /> : <CameraIcon />}
+          </div>
+        )}
       </div>
       {activeInput === "avatar" && (
         <div className="mx-auto">
@@ -121,11 +144,13 @@ const Profile = () => {
           </>
         ) : (
           <>
-            <PencilIcon
-              className="inline w-5 mx-2 cursor-pointer"
-              onClick={() => handleActivateInput("username")}
-            />
-            <p className="mt-2 mb-8">{user?.username}</p>
+            {(!id || user?.id === +id) && (
+              <PencilIcon
+                className="inline w-5 mx-2 cursor-pointer"
+                onClick={() => handleActivateInput("username")}
+              />
+            )}
+            <p className="mt-2 mb-8">{profile?.username}</p>
           </>
         )}
       </form>
@@ -152,11 +177,13 @@ const Profile = () => {
           </>
         ) : (
           <>
-            <PencilIcon
-              className="inline w-5 mx-2 cursor-pointer"
-              onClick={() => handleActivateInput("bio")}
-            />
-            <p className="mt-2 mb-8">{user?.bio || "(No bio)"}</p>
+            {(!id || user?.id === +id) && (
+              <PencilIcon
+                className="inline w-5 mx-2 cursor-pointer"
+                onClick={() => handleActivateInput("bio")}
+              />
+            )}
+            <p className="mt-2 mb-8">{profile?.bio || "(No bio)"}</p>
           </>
         )}
       </form>

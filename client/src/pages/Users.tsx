@@ -4,7 +4,7 @@ import ApiClient from "@/helpers/ApiClient";
 import { User } from "@/types";
 import { UserRoundIcon } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Users = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -15,7 +15,6 @@ const Users = () => {
     const getUsers = async () => {
       try {
         const usersData = await ApiClient.getUsers();
-        console.log(usersData);
         setUsers(usersData);
       } catch (error) {
         console.log(error);
@@ -31,6 +30,10 @@ const Users = () => {
     navigate(`/chats/${response.id}`);
   };
 
+  const handleAvatarClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+  };
+
   if (isLoading) return <h1>Loading...</h1>;
 
   return (
@@ -44,12 +47,14 @@ const Users = () => {
             onClick={() => handleClick(user.id)}
           >
             <CardContent className="flex items-center gap-2 p-1">
-              <Avatar>
-                <AvatarImage src={user.avatar} alt={user.username} />
-                <AvatarFallback>
-                  <UserRoundIcon />
-                </AvatarFallback>
-              </Avatar>
+              <Link to={`/profile/${user.id}`} onClick={handleAvatarClick}>
+                <Avatar>
+                  <AvatarImage src={user.avatar} alt={user.username} />
+                  <AvatarFallback>
+                    <UserRoundIcon />
+                  </AvatarFallback>
+                </Avatar>
+              </Link>
               <span>{user.username}</span>
             </CardContent>
           </Card>

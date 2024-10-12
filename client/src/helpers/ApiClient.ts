@@ -124,6 +124,13 @@ class ApiClient {
     return response.data;
   }
 
+  public async getUser(id: string): Promise<User> {
+    const response: AxiosResponse = await this.axiosInstance.get(
+      `/users/${id}`,
+    );
+    return response.data;
+  }
+
   public async createChat(userId: number) {
     const response: AxiosResponse = await this.axiosInstance.post("/chats", {
       user_id: userId,

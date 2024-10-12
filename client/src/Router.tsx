@@ -44,7 +44,7 @@ const Router = () => {
             { index: true, element: <Chats /> },
             { path: "/chats/:id", element: <Chat /> },
             { path: "/users", element: <Users /> },
-            { path: "/profile", element: <Profile /> },
+            { path: "/profile/:id?", element: <Profile /> },
           ],
         },
         {

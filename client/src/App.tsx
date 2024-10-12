@@ -35,7 +35,7 @@ function App() {
           )}
         </div>
       </header>
-      <main className="flex-grow grid grid-cols-1 overflow-hidden">
+      <main className="flex-grow flex flex-col overflow-hidden">
         <Outlet />
       </main>
     </>

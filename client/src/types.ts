@@ -9,9 +9,10 @@ interface User {
 interface ChatI {
   id: string;
   name: string;
+  image: string;
+  profile_id: number;
   messages?: Message[];
   last_message?: Omit<Message, "user_id">;
-  image: string;
 }
 
 interface Message {

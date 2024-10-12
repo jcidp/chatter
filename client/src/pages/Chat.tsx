@@ -70,7 +70,7 @@ const Chat = () => {
   };
 
   return (
-    <div className="grid grid-rows-[max-content_1fr]">
+    <div className="flex-grow flex flex-col overflow-hidden p-1">
       <div>
         <Card className="flex items-center gap-4 p-2 rounded-sm">
           <Link to="/">
@@ -85,7 +85,7 @@ const Chat = () => {
           {chatData.name}
         </Card>
       </div>
-      <div className="bg-secondary flex flex-col-reverse p-2 gap-1">
+      <div className="flex-grow bg-secondary overflow-y-auto flex flex-col-reverse p-2 gap-1">
         {messages && messages.length > 0 ? (
           messages.map((message) => (
             <Card

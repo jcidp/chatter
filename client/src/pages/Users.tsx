@@ -43,7 +43,7 @@ const Users = () => {
         {users.map((user) => (
           <Card
             key={user.id}
-            className="flex items-center"
+            className="flex items-center cursor-pointer"
             onClick={() => handleClick(user.id)}
           >
             <CardContent className="flex items-center gap-2 p-1">

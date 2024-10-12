@@ -24,7 +24,6 @@ const Profile = () => {
       setBio(user.bio);
     } else {
       const getUser = async () => {
-        console.log("Fetching");
         const user = await ApiClient.getUser(id);
         setProfile(user);
         setUsername(user.username);

@@ -17,7 +17,7 @@ const ChatCard = ({ id, name, last_message, image, profile_id }: ChatI) => {
   };
 
   return (
-    <Card className="relative" onClick={handleCardClick}>
+    <Card className="cursor-pointer" onClick={handleCardClick}>
       <CardHeader className="flex-row items-center gap-2 px-4 py-2">
         <div>
           <Link

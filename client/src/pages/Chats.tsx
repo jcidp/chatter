@@ -23,7 +23,7 @@ function Chats() {
   return (
     <div>
       <Link to="/users">
-        <Button className="my-4 block">+ New chat</Button>
+        <Button className="my-4">+ New chat</Button>
       </Link>
       <div className="grid gap-y-2">
         {chats?.map((chat) => <ChatCard {...chat} key={chat.id} />)}

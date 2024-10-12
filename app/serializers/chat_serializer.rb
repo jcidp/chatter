@@ -1,5 +1,5 @@
 class ChatSerializer < ActiveModel::Serializer
-  attributes :id, :name, :last_message, :image
+  attributes :id, :name, :last_message, :image, :profile_id
 
   attribute :last_message, if: :include_last_message?
   has_many :messages, if: :include_messages?
@@ -17,6 +17,11 @@ class ChatSerializer < ActiveModel::Serializer
   def image
     other_user = object.users.find { |user| user != instance_options[:current_user] }
     UserSerializer.new(other_user).avatar if other_user
+  end
+
+  def profile_id
+    other_user = object.users.find { |user| user != instance_options[:current_user] }
+    other_user&.id
   end
 
   def messages

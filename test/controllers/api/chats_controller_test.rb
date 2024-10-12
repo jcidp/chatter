@@ -11,11 +11,25 @@ class Api::ChatsControllerTest < ActionDispatch::IntegrationTest
 
   test "should get index" do
     get api_chats_url, headers: default_headers
+    @other_user = users(:john_smith)
     expected_response = [
-      {id: @user.chats[0].id, name: "jon1234", last_message: {
-        text: "MyText", created_at: @user.chats[0].messages&.last&.created_at
-      }, image: nil},
-      {id: @user.chats[1].id, name: "jon1234", last_message: nil, image: nil}
+      {
+        id: @user.chats[0].id,
+        name: @other_user.username,
+        last_message: {
+          text: "MyText",
+          created_at: @user.chats[0].messages&.last&.created_at
+        },
+        image: nil,
+        profile_id: @other_user.id
+      },
+      {
+        id: @user.chats[1].id,
+        name: @other_user.username,
+        last_message: nil,
+        image: nil,
+        profile_id: @other_user.id
+      }
     ]
     assert_equal expected_response.to_json, @response.body
   end
@@ -24,10 +38,12 @@ class Api::ChatsControllerTest < ActionDispatch::IntegrationTest
     @chat = chats(:one)
     @chat.messages.create(text: "last message", user_id: @user.id)
     @messages = @chat.messages.sorted.as_json
+    @other_user = users(:john_smith)
     expected_response = {
       id: @chat.id,
-      name: "jon1234",
+      name: @other_user.username,
       image: nil,
+      profile_id: @other_user.id,
       messages: @messages
     }
     get api_chat_url(@chat), headers: default_headers

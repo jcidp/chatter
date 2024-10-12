@@ -16,19 +16,19 @@ class Api::ChatsControllerTest < ActionDispatch::IntegrationTest
       {
         id: @user.chats[0].id,
         name: @other_user.username,
+        image: nil,
+        profile_id: @other_user.id,
         last_message: {
           text: "MyText",
           created_at: @user.chats[0].messages&.last&.created_at
-        },
-        image: nil,
-        profile_id: @other_user.id
+        }
       },
       {
         id: @user.chats[1].id,
         name: @other_user.username,
-        last_message: nil,
         image: nil,
-        profile_id: @other_user.id
+        profile_id: @other_user.id,
+        last_message: nil
       }
     ]
     assert_equal expected_response.to_json, @response.body

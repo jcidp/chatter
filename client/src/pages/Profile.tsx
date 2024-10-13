@@ -74,9 +74,9 @@ const Profile = () => {
   };
 
   return (
-    <div>
-      <div className="relative">
-        <Avatar className="w-52 h-52 mx-auto">
+    <div className="flex-grow">
+      <div className="relative h-1/2 grid place-content-center">
+        <Avatar className="w-56 h-56 mx-auto md:w-96 md:h-96">
           <AvatarImage src={profile?.avatar} alt={profile?.username} />
           <AvatarFallback>
             <svg
@@ -86,8 +86,6 @@ const Profile = () => {
               x="0px"
               y="0px"
               viewBox="0 0 512 512"
-              width="208"
-              height="208"
             >
               <g>
                 <circle cx="256" cy="128" r="128" />
@@ -98,10 +96,14 @@ const Profile = () => {
         </Avatar>
         {(!id || user?.id === +id) && (
           <div
-            className="absolute right-1/2 translate-x-24 bottom-0 bg-blue-400 p-4 rounded-full cursor-pointer"
+            className="absolute left-1/2 translate-x-10 top-1/2 translate-y-14 md:translate-x-16 md:translate-y-28 bg-blue-400 p-4 rounded-full cursor-pointer"
             onClick={() => handleActivateInput("avatar")}
           >
-            {activeInput === "avatar" ? <XIcon /> : <CameraIcon />}
+            {activeInput === "avatar" ? (
+              <XIcon />
+            ) : (
+              <CameraIcon className="w-7 h-7 md:w-12 md:h-12" />
+            )}
           </div>
         )}
       </div>

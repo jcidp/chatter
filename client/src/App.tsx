@@ -16,38 +16,40 @@ function App() {
 
   return (
     <>
-      <header className="m-2">
-        <div className="flex justify-between">
-          {location.pathname === "/" ? (
-            <div></div>
-          ) : (
-            <button onClick={handleReturn}>
-              <ArrowBigLeft />
-            </button>
-          )}
+      <header className="p-2 w-full">
+        <div className="flex justify-between items-center mx-auto max-w-[70ch]">
+          <div className="w-20">
+            {location.pathname !== "/" && (
+              <button onClick={handleReturn}>
+                <ArrowBigLeft />
+              </button>
+            )}
+          </div>
           <Link to="/">
-            <h1 className="text-xl text-blue-700 inline">Chatter</h1>
+            <h1 className="text-xl font-bold text-blue-700 inline">Chatter</h1>
           </Link>
-          {location.pathname === "/profile" ? (
-            <Button
-              className="bg-secondary text-secondary-foreground"
-              onClick={() => logout()}
-            >
-              Logout
-            </Button>
-          ) : (
-            <Link to="/profile">
-              <Avatar>
-                <AvatarImage src={user?.avatar} alt={user?.username} />
-                <AvatarFallback>
-                  <UserRoundIcon />
-                </AvatarFallback>
-              </Avatar>
-            </Link>
-          )}
+          <div className="w-20 grid place-content-end">
+            {location.pathname === "/profile" ? (
+              <Button
+                className="bg-secondary text-secondary-foreground"
+                onClick={() => logout()}
+              >
+                Logout
+              </Button>
+            ) : (
+              <Link to="/profile">
+                <Avatar>
+                  <AvatarImage src={user?.avatar} alt={user?.username} />
+                  <AvatarFallback>
+                    <UserRoundIcon />
+                  </AvatarFallback>
+                </Avatar>
+              </Link>
+            )}
+          </div>
         </div>
       </header>
-      <main className="flex-grow flex flex-col overflow-hidden">
+      <main className="flex-grow flex flex-col overflow-hidden w-full">
         <Outlet />
       </main>
     </>

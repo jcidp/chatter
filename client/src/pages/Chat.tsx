@@ -54,14 +54,11 @@ const Chat = () => {
     };
   }, [chatId]);
 
-  const handleSendMessage = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      if (text.trim() && subscription) {
-        subscription.perform("receive", {
-          text: text.trim(),
-          id: chatId,
-        });
+      if (text.trim() && chatId && subscription) {
+        await ApiClient.postMessage(chatId, text.trim());
         setText("");
       }
     } catch (error) {

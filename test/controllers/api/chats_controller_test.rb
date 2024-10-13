@@ -37,7 +37,7 @@ class Api::ChatsControllerTest < ActionDispatch::IntegrationTest
   test "should get show" do
     @chat = chats(:one)
     @chat.messages.create(text: "last message", user_id: @user.id)
-    @messages = @chat.messages.sorted.as_json
+    @messages = @chat.messages.sorted.as_json(only: [:text, :user_id, :created_at], include: :image)
     @other_user = users(:john_smith)
     expected_response = {
       id: @chat.id,

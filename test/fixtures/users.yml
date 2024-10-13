@@ -11,6 +11,7 @@ john_smith:
   email: john.smith@email.com
   password_digest: <%= BCrypt::Password.create("Secret1*3*5*") %>
   verified: true
+  bio: Hi there!
 
 jane_doe:
   username: jane

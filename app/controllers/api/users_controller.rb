@@ -6,6 +6,6 @@ class Api::UsersController < ApplicationController
 
   def show
     @user = User.find(params[:id])
-    render json: @user, status: :ok
+    render json: @user, include_bio: true, status: :ok
   end
 end

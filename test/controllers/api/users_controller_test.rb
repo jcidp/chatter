@@ -11,11 +11,13 @@ class Api::UsersControllerTest < ActionDispatch::IntegrationTest
 
   test "should get index" do
     get api_users_url, headers: default_headers
-    assert_equal [users(:john_smith), users(:jane_doe)].to_json, @response.body
+    assert_equal [users(:john_smith).as_json(include: :avatar), users(:jane_doe).as_json(include: :avatar)].to_json, @response.body
   end
 
-  # test "should get show" do
-  #   get api_user_url
-  #   assert_response :success
-  # end
+  test "should get show" do
+    another_user = users(:john_smith)
+    get api_user_url(another_user), headers: default_headers
+    assert_equal another_user.to_json(methods: :bio, include: :avatar), @response.body
+    assert_response :success
+  end
 end

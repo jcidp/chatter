@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import ApiClient from "@/helpers/ApiClient";
 import { useAuth } from "@/helpers/AuthProvider";
+import { User } from "@/types";
 import { CameraIcon, CheckIcon, PencilIcon, XIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -14,7 +15,7 @@ const Profile = () => {
   const [activeInput, setActiveInput] = useState("");
   const [username, setUsername] = useState(user?.username);
   const [bio, setBio] = useState(user?.bio);
-  const [profile, setProfile] = useState(user);
+  const [profile, setProfile] = useState<User | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -34,7 +35,7 @@ const Profile = () => {
   }, [id]);
 
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) return;
+    if (!e.target.files || e.target.files.length < 1) return;
     const avatar = e.target.files[0];
     const avatarFormData = new FormData();
     avatarFormData.append("avatar", avatar);
@@ -42,6 +43,7 @@ const Profile = () => {
       const newUser = await ApiClient.uploadAvatar(avatarFormData);
       console.log("Avatar uploaded successfully");
       updateUser(newUser);
+      setProfile(newUser);
       setActiveInput("");
     } catch (error) {
       console.error("Error uploading avatar:", error);
@@ -95,32 +97,20 @@ const Profile = () => {
           </AvatarFallback>
         </Avatar>
         {(!id || user?.id === +id) && (
-          <div
-            className="absolute left-1/2 translate-x-10 top-1/2 translate-y-14 md:translate-x-16 md:translate-y-28 bg-blue-400 p-4 rounded-full cursor-pointer"
-            onClick={() => handleActivateInput("avatar")}
-          >
-            {activeInput === "avatar" ? (
-              <XIcon />
-            ) : (
-              <CameraIcon className="w-7 h-7 md:w-12 md:h-12" />
-            )}
-          </div>
+          <Label className="absolute left-1/2 translate-x-10 top-1/2 translate-y-14 md:translate-x-16 md:translate-y-28 bg-blue-400 p-4 rounded-full cursor-pointer">
+            <CameraIcon className="w-7 h-7 md:w-12 md:h-12" />
+            <Input
+              className="hidden"
+              type="file"
+              id="avatar"
+              name="avatar"
+              accept="image/*"
+              multiple={false}
+              onChange={handleAvatarChange}
+            />
+          </Label>
         )}
       </div>
-      {activeInput === "avatar" && (
-        <div className="mx-auto">
-          <Label htmlFor="avatar">New photo</Label>
-          <Input
-            className="mx-auto"
-            type="file"
-            id="avatar"
-            name="avatar"
-            accept="image/*"
-            multiple={false}
-            onChange={handleAvatarChange}
-          />
-        </div>
-      )}
       <form className="mt-8" data-type="username" onSubmit={handleSubmit}>
         <span>
           <strong>Username:</strong>

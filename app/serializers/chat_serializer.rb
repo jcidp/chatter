@@ -10,11 +10,14 @@ class ChatSerializer < ActiveModel::Serializer
   
   def last_message
     last_message = object.messages.last
-    last_message&.as_json(only: [:text, :created_at])
+    if last_message
+      text = last_message.text || "(Image)"
+      {text: text}.merge last_message&.as_json(only: :created_at) if last_message
+    end
   end
   
   def image
-    UserSerializer.new(other_user).avatar if other_user
+    UserSerializer.new(other_user, small: true).avatar if other_user
   end
   
   def profile_id

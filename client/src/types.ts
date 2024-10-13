@@ -18,7 +18,8 @@ interface ChatI {
 interface Message {
   created_at: string;
   user_id: number;
-  text: string;
+  text?: string;
+  image?: string;
 }
 
 export type { User, ChatI, Message };

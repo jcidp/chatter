@@ -9,13 +9,15 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Subscription } from "@rails/actioncable";
 import ActionCableManager from "@/helpers/ActionCableManager";
-import { UserRoundIcon } from "lucide-react";
+import { ImageIcon, SendIcon, UserRoundIcon } from "lucide-react";
+import { Label } from "@/components/ui/label";
 
 const Chat = () => {
   const { id: chatId } = useParams();
   const [messages, setMessages] = useState<Message[]>([]);
   const [chatData, setChatData] = useState<ChatI>();
   const [text, setText] = useState("");
+  const [image, setImage] = useState<File | null>(null);
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const { user } = useAuth();
 
@@ -56,13 +58,32 @@ const Chat = () => {
 
   const handleSendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const trimmedText = text.trim();
+    if (!chatId || (!trimmedText && !image) || !subscription) return;
+    const formData = new FormData();
+    formData.append("chat_id", chatId);
+    if (trimmedText) {
+      formData.append("text", trimmedText);
+    }
+    if (image) {
+      formData.append("image", image);
+    }
     try {
-      if (text.trim() && chatId && subscription) {
-        await ApiClient.postMessage(chatId, text.trim());
-        setText("");
-      }
+      await ApiClient.postMessage(formData);
+      setText("");
+      setImage(null);
     } catch (error) {
       console.log("Unable to send message...");
+    }
+  };
+
+  const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setText(e.target.value);
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setImage(e.target.files[0]);
     }
   };
 
@@ -83,10 +104,11 @@ const Chat = () => {
         {messages && messages.length > 0 ? (
           messages.map((message) => (
             <Card
-              className={`p-2 ${user?.id === message.user_id ? "self-end" : "self-start"}`}
+              className={`p-2 max-w-[90%] ${user?.id === message.user_id ? "self-end" : "self-start"}`}
               key={message.created_at}
             >
-              {message.text}
+              {message.image && <img src={message.image} alt={message.text} />}
+              <span>{message.text}</span>
             </Card>
           ))
         ) : (
@@ -96,31 +118,29 @@ const Chat = () => {
         )}
       </div>
       <form
-        className="grid grid-cols-[1fr_max-content] gap-x-2 mt-2 rounded"
+        className="grid grid-cols-[1fr_max-content_max-content] gap-x-2 mt-2 rounded"
         onSubmit={handleSendMessage}
       >
         <Input
           placeholder="Type your message..."
           autoFocus
           value={text}
-          onChange={(e) => setText(e.target.value)}
+          onChange={handleTextChange}
         />
-        <Button type="submit" disabled={!text}>
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="lucide lucide-send h-4 w-4"
-          >
-            <path d="m22 2-7 20-4-9-9-4Z"></path>
-            <path d="M22 2 11 13"></path>
-          </svg>
+        <Label>
+          <Input
+            className="hidden"
+            type="file"
+            id="image"
+            name="image"
+            accept="image/*"
+            multiple={false}
+            onChange={handleImageChange}
+          />
+          <ImageIcon className={`w-10 h-10 ${image && "stroke-green-700"}`} />
+        </Label>
+        <Button type="submit" disabled={!text && !image}>
+          <SendIcon className="w-4" />
         </Button>
       </form>
     </div>

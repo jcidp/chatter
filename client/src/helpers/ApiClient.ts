@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
-import { ChatI, User } from "../types";
+import { ChatI, Message, User } from "../types";
 import ActionCableManager from "./ActionCableManager";
 
 const TOKEN_KEY = "auth_token";
@@ -111,11 +111,16 @@ class ApiClient {
     return response.data;
   }
 
-  public async postMessage(chatId: string, text: string) {
-    const response: AxiosResponse = await this.axiosInstance.post("/messages", {
-      chat_id: chatId,
-      text,
-    });
+  public async postMessage(formData: FormData) {
+    const response: AxiosResponse = await this.axiosInstance.post(
+      "/messages",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      },
+    );
     return response.data;
   }
 

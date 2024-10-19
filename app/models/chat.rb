@@ -1,7 +1,8 @@
 class Chat < ApplicationRecord
-  has_many :chat_users
+  has_many :chat_users, dependent: :destroy
   has_many :users, through: :chat_users
   has_many :messages, dependent: :destroy
+  has_one :group, dependent: :destroy
 
   self.implicit_order_column = "created_at"
 
@@ -15,7 +16,7 @@ class Chat < ApplicationRecord
 
   def self.find_or_create_by_users!(user1, user2)
     chat = Chat.joins(:chat_users)
-               .where(chat_users: { user_id: [user1.id, user2.id] })
+               .where(chat_users: { user_id: [user1.id, user2.id], is_admin: nil })
                .group(:id)
                .having("COUNT(*) = 2")
                .select("chats.id")

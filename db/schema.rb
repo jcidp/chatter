@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_10_05_204733) do
+ActiveRecord::Schema[7.1].define(version: 2024_10_19_182012) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -47,6 +47,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_05_204733) do
     t.uuid "chat_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "is_admin"
     t.index ["chat_id"], name: "index_chat_users_on_chat_id"
     t.index ["user_id"], name: "index_chat_users_on_user_id"
   end
@@ -54,6 +55,15 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_05_204733) do
   create_table "chats", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "groups", force: :cascade do |t|
+    t.string "name"
+    t.text "description"
+    t.uuid "chat_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["chat_id"], name: "index_groups_on_chat_id"
   end
 
   create_table "messages", force: :cascade do |t|
@@ -90,6 +100,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_10_05_204733) do
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "chat_users", "chats"
   add_foreign_key "chat_users", "users"
+  add_foreign_key "groups", "chats"
   add_foreign_key "messages", "chats"
   add_foreign_key "messages", "users"
   add_foreign_key "sessions", "users"

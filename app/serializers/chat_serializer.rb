@@ -5,7 +5,7 @@ class ChatSerializer < ActiveModel::Serializer
   has_many :messages, if: :include_messages?
   
   def name
-    other_user&.username
+    object.group ? object.group.name : other_user&.username
   end
   
   def last_message
@@ -17,11 +17,15 @@ class ChatSerializer < ActiveModel::Serializer
   end
   
   def image
-    UserSerializer.new(other_user, small: true).avatar if other_user
+    if object.group
+      GroupSerializer.new(object.group, small: true).photo
+    else
+      UserSerializer.new(other_user, small: true).avatar if other_user
+    end
   end
   
   def profile_id
-    other_user&.id
+    object.group ? object.group.id : other_user&.id
   end
   
   def messages

@@ -16,6 +16,7 @@ Rails.application.routes.draw do
     resources :messages, only: [:create]
     resources :users, only: [:index, :show]
     resource :avatar, only: [:update]
+    resources :groups, only: [:show, :create, :update]
   end
 
   get "up" => "rails/health#show", as: :rails_health_check

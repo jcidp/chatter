@@ -12,6 +12,7 @@ class User < ApplicationRecord
   has_many :chat_users
   has_many :chats, through: :chat_users
   has_many :messages, inverse_of: "author"
+  has_many :groups, through: :chats
   has_one_attached :avatar
 
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }

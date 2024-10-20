@@ -1,9 +1,9 @@
 interface User {
   id: number;
-  email: string;
   username: string;
   avatar?: string;
   bio?: string;
+  is_admin?: boolean;
 }
 
 interface ChatI {
@@ -13,6 +13,7 @@ interface ChatI {
   profile_id: number;
   messages?: Message[];
   last_message?: Omit<Message, "user_id">;
+  type: "profile" | "group";
 }
 
 interface Message {
@@ -23,9 +24,11 @@ interface Message {
 }
 
 interface Group {
+  id?: number;
   name: string;
   description?: string;
   user_ids: number[];
+  members?: User[];
   photo?: string;
 }
 

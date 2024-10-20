@@ -47,6 +47,7 @@ const Router = () => {
             { path: "/users", element: <Users /> },
             { path: "/profile/:id?", element: <Profile /> },
             { path: "/new-group", element: <NewGroup /> },
+            { path: "/group/:id", element: <Profile /> },
           ],
         },
         {

@@ -9,7 +9,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Subscription } from "@rails/actioncable";
 import ActionCableManager from "@/helpers/ActionCableManager";
-import { ImageIcon, SendIcon, UserRoundIcon } from "lucide-react";
+import {
+  ImageIcon,
+  SendIcon,
+  UserRoundIcon,
+  UsersRoundIcon,
+} from "lucide-react";
 import { Label } from "@/components/ui/label";
 
 const Chat = () => {
@@ -24,11 +29,11 @@ const Chat = () => {
   useEffect(() => {
     if (!chatId) return;
     const getChat = async () => {
-      const { id, name, image, profile_id, messages } =
+      const { id, name, image, profile_id, messages, type } =
         await ApiClient.getChat(chatId);
       if (!messages) return;
       setMessages(messages);
-      setChatData({ id, name, image, profile_id });
+      setChatData({ id, name, image, profile_id, type });
     };
     getChat();
   }, [chatId]);
@@ -89,12 +94,22 @@ const Chat = () => {
 
   return (
     <div className="flex-grow flex flex-col overflow-hidden p-1">
-      <Link to={`/profile/${chatData?.profile_id}`}>
+      <Link
+        to={
+          chatData?.type === "group"
+            ? `/group/${chatData?.profile_id}`
+            : `/profile/${chatData?.profile_id}`
+        }
+      >
         <Card className="flex items-center gap-4 p-2 rounded-sm">
           <Avatar>
             <AvatarImage src={chatData?.image} alt={chatData?.name} />
             <AvatarFallback>
-              <UserRoundIcon />
+              {chatData?.type === "group" ? (
+                <UsersRoundIcon />
+              ) : (
+                <UserRoundIcon />
+              )}
             </AvatarFallback>
           </Avatar>
           {chatData?.name}

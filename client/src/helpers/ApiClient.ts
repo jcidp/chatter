@@ -124,7 +124,7 @@ class ApiClient {
     return response.data;
   }
 
-  public async getUsers() {
+  public async getUsers(): Promise<User[]> {
     const response: AxiosResponse = await this.axiosInstance.get("/users");
     return response.data;
   }
@@ -143,7 +143,7 @@ class ApiClient {
     return response.data;
   }
 
-  public async uploadAvatar(avatarFormData: FormData) {
+  public async uploadAvatar(avatarFormData: FormData): Promise<User> {
     const response: AxiosResponse = await this.axiosInstance.put(
       "/avatar",
       avatarFormData,
@@ -156,7 +156,10 @@ class ApiClient {
     return response.data;
   }
 
-  public async updateCurrentUser(payload: { username?: string; bio?: string }) {
+  public async updateCurrentUser(payload: {
+    username?: string;
+    bio?: string;
+  }): Promise<User> {
     const response: AxiosResponse = await this.axiosInstance.put(
       "/current_user",
       payload,
@@ -168,6 +171,43 @@ class ApiClient {
     const response: AxiosResponse = await this.axiosInstance.post(
       "/groups",
       group,
+    );
+    return response.data;
+  }
+
+  public async getGroup(id: string): Promise<Group> {
+    const response: AxiosResponse = await this.axiosInstance.get(
+      `/groups/${id}`,
+    );
+    return response.data;
+  }
+
+  public async updateGroup(
+    id: string,
+    payload: {
+      name?: string;
+      description?: string;
+    },
+  ): Promise<Group> {
+    const response: AxiosResponse = await this.axiosInstance.put(
+      `/groups/${id}`,
+      payload,
+    );
+    return response.data;
+  }
+
+  public async uploadGroupPhoto(
+    id: string,
+    photoFormData: FormData,
+  ): Promise<Group> {
+    const response: AxiosResponse = await this.axiosInstance.put(
+      `/groups/${id}/photo`,
+      photoFormData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      },
     );
     return response.data;
   }

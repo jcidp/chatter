@@ -3,9 +3,16 @@ import { Card, CardContent, CardHeader } from "./ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Link, useNavigate } from "react-router-dom";
 import { formatTimestamp } from "@/helpers/helpers";
-import { UserRoundIcon } from "lucide-react";
+import { UserRoundIcon, UsersRoundIcon } from "lucide-react";
 
-const ChatCard = ({ id, name, last_message, image, profile_id }: ChatI) => {
+const ChatCard = ({
+  id,
+  name,
+  last_message,
+  image,
+  profile_id,
+  type,
+}: ChatI) => {
   const navigate = useNavigate();
 
   const handleCardClick = () => {
@@ -21,14 +28,18 @@ const ChatCard = ({ id, name, last_message, image, profile_id }: ChatI) => {
       <CardHeader className="flex-row items-center gap-2 px-4 py-2">
         <div>
           <Link
-            to={`/profile/${profile_id}`}
+            to={
+              type === "profile"
+                ? `/profile/${profile_id}`
+                : `/group/${profile_id}`
+            }
             className="z-10"
             onClick={handleAvatarClick}
           >
             <Avatar>
               <AvatarImage src={image} />
               <AvatarFallback>
-                <UserRoundIcon />
+                {type === "group" ? <UsersRoundIcon /> : <UserRoundIcon />}
               </AvatarFallback>
             </Avatar>
           </Link>

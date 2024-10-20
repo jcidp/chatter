@@ -30,10 +30,7 @@ function App() {
           </Link>
           <div className="w-20 grid place-content-end">
             {location.pathname === "/profile" ? (
-              <Button
-                className="bg-secondary text-secondary-foreground"
-                onClick={() => logout()}
-              >
+              <Button variant="secondary" onClick={() => logout()}>
                 Logout
               </Button>
             ) : (
@@ -49,7 +46,9 @@ function App() {
           </div>
         </div>
       </header>
-      <main className="flex-grow flex flex-col overflow-hidden w-full">
+      <main
+        className={`flex-grow flex flex-col ${location.pathname.startsWith("/chats") ? "overflow-hidden" : "overflow-auto"} w-full`}
+      >
         <Outlet />
       </main>
     </>

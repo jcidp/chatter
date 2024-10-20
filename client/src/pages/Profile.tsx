@@ -1,29 +1,42 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import ApiClient from "@/helpers/ApiClient";
 import { useAuth } from "@/helpers/AuthProvider";
-import { User } from "@/types";
-import { CameraIcon, CheckIcon, PencilIcon, XIcon } from "lucide-react";
+import { Group, User } from "@/types";
+import {
+  CameraIcon,
+  CheckIcon,
+  PencilIcon,
+  UserRoundIcon,
+  UsersRoundIcon,
+  XIcon,
+} from "lucide-react";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router-dom";
 
 const Profile = () => {
   const { user, updateUser } = useAuth();
+  const location = useLocation();
+  const isGroup = location.pathname.startsWith("/group");
   const { id } = useParams();
   const [activeInput, setActiveInput] = useState("");
   const [username, setUsername] = useState(user?.username);
   const [bio, setBio] = useState(user?.bio);
   const [profile, setProfile] = useState<User | null>(null);
+  const [groupMembers, setGroupMembers] = useState<User[]>([]);
 
   useEffect(() => {
     if (!user) return;
-    if (!id || user.id === +id) {
+    if (!id || (!isGroup && user.id === +id)) {
       setProfile(user);
       setUsername(user.username);
       setBio(user.bio);
-    } else {
+    } else if (!isGroup) {
       const getUser = async () => {
         const user = await ApiClient.getUser(id);
         setProfile(user);
@@ -31,22 +44,50 @@ const Profile = () => {
         setBio(user.bio);
       };
       getUser();
+    } else {
+      const getGroup = async () => {
+        const group = await ApiClient.getGroup(id);
+        setProfile({
+          id: group.id || 0,
+          username: group.name,
+          bio: group.description,
+          avatar: group.photo,
+        });
+        console.log(group);
+        setUsername(group.name);
+        setBio(group.description);
+        if (group.members) setGroupMembers(group.members);
+      };
+      getGroup();
     }
-  }, [id]);
+  }, [id, isGroup]);
 
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length < 1) return;
-    const avatar = e.target.files[0];
-    const avatarFormData = new FormData();
-    avatarFormData.append("avatar", avatar);
+    const photo = e.target.files[0];
+    const photoFormData = new FormData();
     try {
-      const newUser = await ApiClient.uploadAvatar(avatarFormData);
-      console.log("Avatar uploaded successfully");
-      updateUser(newUser);
-      setProfile(newUser);
-      setActiveInput("");
+      if (isGroup) {
+        if (!id) return;
+        photoFormData.append("photo", photo);
+        const newGroup = await ApiClient.uploadGroupPhoto(id, photoFormData);
+        setProfile({
+          id: newGroup.id || 0,
+          username: newGroup.name,
+          bio: newGroup.description,
+          avatar: newGroup.photo,
+        });
+        setActiveInput("");
+      } else {
+        photoFormData.append("avatar", photo);
+        const newUser = await ApiClient.uploadAvatar(photoFormData);
+        console.log("Avatar uploaded successfully");
+        updateUser(newUser);
+        setProfile(newUser);
+        setActiveInput("");
+      }
     } catch (error) {
-      console.error("Error uploading avatar:", error);
+      console.error("Error uploading image:", error);
     }
   };
 
@@ -66,14 +107,44 @@ const Profile = () => {
     e.preventDefault();
     if (!(e.target instanceof HTMLFormElement)) return;
     if (e.target.dataset.type === "username") {
-      const newUser = await ApiClient.updateCurrentUser({ username });
-      updateUser(newUser);
+      if (isGroup) {
+        if (!id) return;
+        const newGroup = await ApiClient.updateGroup(id, { name: username });
+        setProfile((oldProfile) =>
+          oldProfile ? { ...oldProfile, username: newGroup.name } : null,
+        );
+      } else {
+        const newUser = await ApiClient.updateCurrentUser({ username });
+        updateUser(newUser);
+        setProfile(newUser);
+      }
     } else if (e.target.dataset.type === "bio") {
-      const newUser = await ApiClient.updateCurrentUser({ bio });
-      updateUser(newUser);
+      if (isGroup) {
+        if (!id) return;
+        const newGroup = await ApiClient.updateGroup(id, { description: bio });
+        setProfile((oldProfile) =>
+          oldProfile ? { ...oldProfile, bio: newGroup.description } : null,
+        );
+      } else {
+        const newUser = await ApiClient.updateCurrentUser({ bio });
+        updateUser(newUser);
+        setProfile(newUser);
+      }
     }
     setActiveInput("");
   };
+
+  const isEditable =
+    (isGroup &&
+      user?.id &&
+      groupMembers
+        .reduce(
+          (admins: number[], member) =>
+            member?.is_admin ? [...admins, member.id] : admins,
+          [],
+        )
+        .includes(user?.id)) ||
+    (!isGroup && (!id || user?.id === +id));
 
   return (
     <div className="flex-grow">
@@ -81,22 +152,14 @@ const Profile = () => {
         <Avatar className="w-56 h-56 mx-auto md:w-96 md:h-96">
           <AvatarImage src={profile?.avatar} alt={profile?.username} />
           <AvatarFallback>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              version="1.1"
-              id="Capa_1"
-              x="0px"
-              y="0px"
-              viewBox="0 0 512 512"
-            >
-              <g>
-                <circle cx="256" cy="128" r="128" />
-                <path d="M256,298.667c-105.99,0.118-191.882,86.01-192,192C64,502.449,73.551,512,85.333,512h341.333   c11.782,0,21.333-9.551,21.333-21.333C447.882,384.677,361.99,298.784,256,298.667z" />
-              </g>
-            </svg>
+            {isGroup ? (
+              <UsersRoundIcon className="w-4/6 h-5/6 scale-110 stroke-1" />
+            ) : (
+              <UserRoundIcon className="w-5/6 h-5/6 scale-110 stroke-1" />
+            )}
           </AvatarFallback>
         </Avatar>
-        {(!id || user?.id === +id) && (
+        {isEditable && (
           <Label className="absolute left-1/2 translate-x-10 top-1/2 translate-y-14 md:translate-x-16 md:translate-y-28 bg-blue-400 p-4 rounded-full cursor-pointer">
             <CameraIcon className="w-7 h-7 md:w-12 md:h-12" />
             <Input
@@ -113,7 +176,7 @@ const Profile = () => {
       </div>
       <form className="mt-8" data-type="username" onSubmit={handleSubmit}>
         <span>
-          <strong>Username:</strong>
+          <strong>{isGroup ? "Name" : "Username"}:</strong>
         </span>
         {activeInput === "username" ? (
           <>
@@ -135,7 +198,7 @@ const Profile = () => {
           </>
         ) : (
           <>
-            {(!id || user?.id === +id) && (
+            {isEditable && (
               <PencilIcon
                 className="inline w-5 mx-2 cursor-pointer"
                 onClick={() => handleActivateInput("username")}
@@ -147,7 +210,7 @@ const Profile = () => {
       </form>
       <form className="my-4" data-type="bio" onSubmit={handleSubmit}>
         <span>
-          <strong>Bio:</strong>
+          <strong>{isGroup ? "Description" : "Bio"}:</strong>
         </span>
         {activeInput === "bio" ? (
           <>
@@ -168,16 +231,64 @@ const Profile = () => {
           </>
         ) : (
           <>
-            {(!id || user?.id === +id) && (
+            {isEditable && (
               <PencilIcon
                 className="inline w-5 mx-2 cursor-pointer"
                 onClick={() => handleActivateInput("bio")}
               />
             )}
-            <p className="mt-2 mb-8">{profile?.bio || "(No bio)"}</p>
+            <p className="mt-2 mb-8">{profile?.bio || "(Empty)"}</p>
           </>
         )}
       </form>
+      {isGroup && (
+        <div>
+          {isEditable && <Button className="mb-4">+ Add members</Button>}
+          <div className="grid gap-y-2">
+            {groupMembers.map((member) => (
+              <Card key={member.id} className="w-full">
+                <CardContent className="flex flex-wrap md:grid md:grid-cols-2 items-center gap-x-2 p-2 px-4 md:p-1">
+                  <div className="flex items-center gap-2">
+                    <Link to={`/profile/${member.id}`}>
+                      <Avatar>
+                        <AvatarImage
+                          src={member.avatar}
+                          alt={member.username}
+                        />
+                        <AvatarFallback>
+                          <UserRoundIcon />
+                        </AvatarFallback>
+                      </Avatar>
+                    </Link>
+                    <span>{member.username}</span>
+                  </div>
+                  <div
+                    className={`${member.is_admin ? "" : "w-full"} grid grid-cols-2 place-items-center`}
+                  >
+                    {member.is_admin && (
+                      <Badge className="my-2 col-span-2">Admin</Badge>
+                    )}
+                    {isEditable && !member.is_admin && (
+                      <>
+                        <Button variant="ghost">Make admin</Button>
+                        <Button
+                          variant="ghost"
+                          className="hover:bg-destructive/90 hover:text-background"
+                        >
+                          Remove
+                        </Button>
+                      </>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          <Button variant="destructive" className="my-4">
+            Leave group
+          </Button>
+        </div>
+      )}
     </div>
   );
 };

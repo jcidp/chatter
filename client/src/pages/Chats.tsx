@@ -12,7 +12,6 @@ function Chats() {
   useEffect(() => {
     const getChats = async () => {
       const chats = await ApiClient.getChats();
-      console.log(chats);
       setChats(chats);
       setIsLoading(false);
     };
@@ -28,7 +27,9 @@ function Chats() {
           <Button className="my-4">+ New chat</Button>
         </Link>
         <Link to="/new-group" className="ml-auto">
-          <Button className="my-4">+ New group</Button>
+          <Button variant="secondary" className="my-4">
+            + New group
+          </Button>
         </Link>
       </div>
       <div className="grid gap-y-2">

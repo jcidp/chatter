@@ -211,6 +211,13 @@ class ApiClient {
     );
     return response.data;
   }
+
+  public async makeUserGroupAdmin(id: string, user_id: number): Promise<Group> {
+    const response: AxiosResponse = await this.axiosInstance.put(
+      `/groups/${id}/admins/${user_id}`,
+    );
+    return response.data;
+  }
 }
 
 export default ApiClient.getInstance();

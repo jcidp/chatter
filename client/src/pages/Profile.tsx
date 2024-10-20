@@ -53,7 +53,6 @@ const Profile = () => {
           bio: group.description,
           avatar: group.photo,
         });
-        console.log(group);
         setUsername(group.name);
         setBio(group.description);
         if (group.members) setGroupMembers(group.members);
@@ -132,6 +131,13 @@ const Profile = () => {
       }
     }
     setActiveInput("");
+  };
+
+  const handleMakeAdmin = async (user_id: number) => {
+    if (!id) return;
+    const response = await ApiClient.makeUserGroupAdmin(id, user_id);
+    console.log(response);
+    if (response.members) setGroupMembers(response.members);
   };
 
   const isEditable =
@@ -270,7 +276,12 @@ const Profile = () => {
                     )}
                     {isEditable && !member.is_admin && (
                       <>
-                        <Button variant="ghost">Make admin</Button>
+                        <Button
+                          variant="ghost"
+                          onClick={() => handleMakeAdmin(member.id)}
+                        >
+                          Make admin
+                        </Button>
                         <Button
                           variant="ghost"
                           className="hover:bg-destructive/90 hover:text-background"

@@ -23,20 +23,38 @@ class Api::GroupsController < ApplicationController
 
   def update
     @group = Current.user.groups.find(params[:id])
-    @group.update!(group_params)
-    render json: @group, status: :ok
+    if @group.is_admin? Current.user
+      @group.update!(group_params)
+      render json: @group, status: :ok
+    else
+      render json: {error: "Only admins can edit a group" }, status: :unauthorized
+    end
   end
 
   def update_photo
     @group = Current.user.groups.find(params[:id])
-    if @group.photo.attach(
-        io: process_image(params[:photo]),
-        filename: params[:photo].original_filename,
-        content_type: params[:photo].content_type
-      )
-      render json: @group, status: :ok
+    if @group.is_admin? Current.user
+      if @group.photo.attach(
+          io: process_image(params[:photo]),
+          filename: params[:photo].original_filename,
+          content_type: params[:photo].content_type
+        )
+        render json: @group, status: :ok
+      else
+        render json: { errors: @group.errors.full_messages }, status: :unprocessable_entity
+      end
     else
-      render json: { errors: @group.errors.full_messages }, status: :unprocessable_entity
+      render json: {error: "Only admins can edit a group" }, status: :unauthorized
+    end
+  end
+
+  def update_admins
+    @group = Current.user.groups.find(params[:id])
+    if @group.is_admin? Current.user.id
+      @group.make_admin(params[:user_id])
+      render json: @group, include_members: true, status: :ok
+    else
+      render json: {error: "Only admins can manage group members" }, status: :unauthorized
     end
   end
 

@@ -18,6 +18,7 @@ Rails.application.routes.draw do
     resource :avatar, only: [:update]
     resources :groups, only: [:show, :create, :update]
     put "groups/:id/photo", to: "groups#update_photo"
+    put "groups/:id/admins/:user_id", to: "groups#update_admins"
   end
 
   get "up" => "rails/health#show", as: :rails_health_check

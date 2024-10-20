@@ -48,10 +48,20 @@ class Api::GroupsController < ApplicationController
     end
   end
 
-  def update_admins
+  def add_admin
     @group = Current.user.groups.find(params[:id])
     if @group.is_admin? Current.user.id
       @group.make_admin(params[:user_id])
+      render json: @group, include_members: true, status: :ok
+    else
+      render json: {error: "Only admins can manage group members" }, status: :unauthorized
+    end
+  end
+
+  def remove_member
+    @group = Current.user.groups.find(params[:id])
+    if @group.is_admin? Current.user.id
+      @group.remove_member(params[:user_id])
       render json: @group, include_members: true, status: :ok
     else
       render json: {error: "Only admins can manage group members" }, status: :unauthorized

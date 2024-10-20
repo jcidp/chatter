@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import ApiClient from "@/helpers/ApiClient";
 import { useAuth } from "@/helpers/AuthProvider";
-import { Group, User } from "@/types";
+import { User } from "@/types";
 import {
   CameraIcon,
   CheckIcon,
@@ -136,6 +136,12 @@ const Profile = () => {
   const handleMakeAdmin = async (user_id: number) => {
     if (!id) return;
     const response = await ApiClient.makeUserGroupAdmin(id, user_id);
+    if (response.members) setGroupMembers(response.members);
+  };
+
+  const handleRemoveMember = async (user_id: number) => {
+    if (!id) return;
+    const response = await ApiClient.removeGroupMember(id, user_id);
     console.log(response);
     if (response.members) setGroupMembers(response.members);
   };
@@ -285,6 +291,7 @@ const Profile = () => {
                         <Button
                           variant="ghost"
                           className="hover:bg-destructive/90 hover:text-background"
+                          onClick={() => handleRemoveMember(member.id)}
                         >
                           Remove
                         </Button>

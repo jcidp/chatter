@@ -213,8 +213,15 @@ class ApiClient {
   }
 
   public async makeUserGroupAdmin(id: string, user_id: number): Promise<Group> {
-    const response: AxiosResponse = await this.axiosInstance.put(
+    const response: AxiosResponse = await this.axiosInstance.post(
       `/groups/${id}/admins/${user_id}`,
+    );
+    return response.data;
+  }
+
+  public async removeGroupMember(id: string, user_id: number): Promise<Group> {
+    const response: AxiosResponse = await this.axiosInstance.delete(
+      `/groups/${id}/members/${user_id}`,
     );
     return response.data;
   }

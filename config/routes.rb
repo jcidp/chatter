@@ -18,7 +18,8 @@ Rails.application.routes.draw do
     resource :avatar, only: [:update]
     resources :groups, only: [:show, :create, :update]
     put "groups/:id/photo", to: "groups#update_photo"
-    put "groups/:id/admins/:user_id", to: "groups#update_admins"
+    post "groups/:id/admins/:user_id", to: "groups#add_admin"
+    delete "groups/:id/members/:user_id", to: "groups#remove_member"
   end
 
   get "up" => "rails/health#show", as: :rails_health_check

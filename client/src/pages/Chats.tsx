@@ -12,6 +12,7 @@ function Chats() {
   useEffect(() => {
     const getChats = async () => {
       const chats = await ApiClient.getChats();
+      console.log(chats);
       setChats(chats);
       setIsLoading(false);
     };
@@ -22,9 +23,14 @@ function Chats() {
 
   return (
     <div>
-      <Link to="/users">
-        <Button className="my-4">+ New chat</Button>
-      </Link>
+      <div className="flex justify-between">
+        <Link to="/users">
+          <Button className="my-4">+ New chat</Button>
+        </Link>
+        <Link to="/new-group" className="ml-auto">
+          <Button className="my-4">+ New group</Button>
+        </Link>
+      </div>
       <div className="grid gap-y-2">
         {chats?.map((chat) => <ChatCard {...chat} key={chat.id} />)}
       </div>

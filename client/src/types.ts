@@ -22,4 +22,11 @@ interface Message {
   image?: string;
 }
 
-export type { User, ChatI, Message };
+interface Group {
+  name: string;
+  description?: string;
+  user_ids: number[];
+  photo?: string;
+}
+
+export type { User, ChatI, Message, Group };

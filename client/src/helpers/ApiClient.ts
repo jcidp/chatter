@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
-import { ChatI, Message, User } from "../types";
+import { ChatI, Group, Message, User } from "../types";
 import ActionCableManager from "./ActionCableManager";
 
 const TOKEN_KEY = "auth_token";
@@ -136,7 +136,7 @@ class ApiClient {
     return response.data;
   }
 
-  public async createChat(userId: number) {
+  public async createChat(userId: number): Promise<ChatI> {
     const response: AxiosResponse = await this.axiosInstance.post("/chats", {
       user_id: userId,
     });
@@ -160,6 +160,14 @@ class ApiClient {
     const response: AxiosResponse = await this.axiosInstance.put(
       "/current_user",
       payload,
+    );
+    return response.data;
+  }
+
+  public async createGroup(group: Group): Promise<ChatI> {
+    const response: AxiosResponse = await this.axiosInstance.post(
+      "/groups",
+      group,
     );
     return response.data;
   }

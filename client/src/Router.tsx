@@ -15,6 +15,7 @@ import { ReactNode, useEffect } from "react";
 import Chat from "./pages/Chat";
 import Users from "./pages/Users";
 import Profile from "./pages/Profile";
+import NewGroup from "./pages/NewGroup";
 
 const ProtectedRoutes = ({ children }: { children?: ReactNode }) => {
   const { isAuthenticated } = useAuth();
@@ -45,6 +46,7 @@ const Router = () => {
             { path: "/chats/:id", element: <Chat /> },
             { path: "/users", element: <Users /> },
             { path: "/profile/:id?", element: <Profile /> },
+            { path: "/new-group", element: <NewGroup /> },
           ],
         },
         {

@@ -17,7 +17,7 @@ import {
   XIcon,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 
 const Profile = () => {
   const { user, updateUser } = useAuth();
@@ -29,6 +29,7 @@ const Profile = () => {
   const [bio, setBio] = useState(user?.bio);
   const [profile, setProfile] = useState<User | null>(null);
   const [groupMembers, setGroupMembers] = useState<User[]>([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!user) return;
@@ -144,6 +145,12 @@ const Profile = () => {
     const response = await ApiClient.removeGroupMember(id, user_id);
     console.log(response);
     if (response.members) setGroupMembers(response.members);
+  };
+
+  const handleLeaveGroup = async () => {
+    if (!id) return;
+    await ApiClient.leaveGroup(id);
+    navigate("/");
   };
 
   const isEditable =
@@ -302,7 +309,11 @@ const Profile = () => {
               </Card>
             ))}
           </div>
-          <Button variant="destructive" className="my-4">
+          <Button
+            variant="destructive"
+            className="my-4"
+            onClick={handleLeaveGroup}
+          >
             Leave group
           </Button>
         </div>

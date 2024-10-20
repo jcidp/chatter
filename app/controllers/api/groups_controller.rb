@@ -68,6 +68,12 @@ class Api::GroupsController < ApplicationController
     end
   end
 
+  def leave
+    @group = Current.user.groups.find(params[:id])
+    @group.remove_member(Current.user.id)
+    render json: {message: "Success"}, status: :ok
+  end
+
   private
     def group_params
       params.require(:group).permit(:name, :description)

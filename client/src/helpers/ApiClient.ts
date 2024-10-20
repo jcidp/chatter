@@ -225,6 +225,13 @@ class ApiClient {
     );
     return response.data;
   }
+
+  public async leaveGroup(id: string) {
+    const response: AxiosResponse = await this.axiosInstance.delete(
+      `/groups/${id}/members`,
+    );
+    return response.data;
+  }
 }
 
 export default ApiClient.getInstance();

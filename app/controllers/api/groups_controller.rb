@@ -1,7 +1,7 @@
 class Api::GroupsController < ApplicationController
   def show
     @group = Current.user.groups.find(params[:id])
-    render json: @group, status: :ok
+    render json: @group, include_members: true, status: :ok
   end
 
   def create
@@ -22,5 +22,38 @@ class Api::GroupsController < ApplicationController
   end
 
   def update
+    @group = Current.user.groups.find(params[:id])
+    @group.update!(group_params)
+    render json: @group, status: :ok
   end
+
+  def update_photo
+    @group = Current.user.groups.find(params[:id])
+    if @group.photo.attach(
+        io: process_image(params[:photo]),
+        filename: params[:photo].original_filename,
+        content_type: params[:photo].content_type
+      )
+      render json: @group, status: :ok
+    else
+      render json: { errors: @group.errors.full_messages }, status: :unprocessable_entity
+    end
+  end
+
+  private
+    def group_params
+      params.require(:group).permit(:name, :description)
+    end
+
+    def process_image(image)
+      p image
+      processed_image = ImageProcessing::MiniMagick
+        .source(image)
+        .resize_to_limit(360, 360)
+        .convert("jpg")
+        .saver(quality: 80)
+        .call
+
+      File.open(processed_image.path)
+    end
 end

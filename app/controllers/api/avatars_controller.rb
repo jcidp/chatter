@@ -6,7 +6,7 @@ class Api::AvatarsController < ApplicationController
       filename: params[:avatar].original_filename,
       content_type: params[:avatar].content_type
       )
-      render json: @user, status: :ok
+      render json: @user, include_bio: true, status: :ok
     else
       render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
     end

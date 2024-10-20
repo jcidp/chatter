@@ -3,6 +3,7 @@ class UserSerializer < ActiveModel::Serializer
   attributes :id, :email, :username, :bio, :avatar  
   
   attribute :bio, if: :include_bio?
+  attribute :is_admin, if: :include_is_admin?
 
   def avatar
     if object.avatar.attached?
@@ -23,7 +24,15 @@ class UserSerializer < ActiveModel::Serializer
     "#{Rails.configuration.x.api_base_url}#{rails_representation_path(variant, only_path: true)}"
   end
 
+  def is_admin
+    object.chat_users.find_by(chat_id: instance_options[:chat_id])&.is_admin || false
+  end
+
   def include_bio?
     instance_options[:include_bio]
+  end
+
+  def include_is_admin?
+    instance_options[:chat_id]
   end
 end

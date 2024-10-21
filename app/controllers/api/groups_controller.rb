@@ -48,6 +48,20 @@ class Api::GroupsController < ApplicationController
     end
   end
 
+  def add_members
+    @group = Current.user.groups.find(params[:id])
+    if @group.is_admin? Current.user.id
+      begin
+        @group.add_users(params[:user_ids])
+        render json: @group, include_members: true, status: :ok
+      rescue ActiveRecord::RecordInvalid => e
+        render json: { error: e.message }, status: :unprocessable_entity
+      end 
+    else
+      render json: {error: "Only admins can manage group members" }, status: :unauthorized
+    end
+  end
+
   def add_admin
     @group = Current.user.groups.find(params[:id])
     if @group.is_admin? Current.user.id

@@ -1,6 +1,11 @@
 class Api::UsersController < ApplicationController
   def index
-    @users = User.where.not(id: Current.user.id)
+    if params[:group_id]
+      group = Current.user.groups.find(params[:group_id])
+      @users = group.non_members
+    else
+      @users = User.where.not(id: Current.user.id)
+    end
     render json: @users, small: true, status: :ok
   end
 

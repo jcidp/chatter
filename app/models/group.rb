@@ -16,9 +16,22 @@ class Group < ApplicationRecord
     chat_user.save
   end
 
+  def add_users(user_ids)
+    ActiveRecord::Base.transaction do
+      user_ids.each do |user_id|
+        self.chat.chat_users.create!(user_id: user_id, is_admin: false)
+      end
+    end
+  end
+
   def remove_member(user_id)
     chat_user = self.find_chat_user(user_id)
     chat_user.destroy
+  end
+
+  def non_members
+    member_ids = self.users.pluck(:id)
+    User.where.not(id: member_ids)
   end
 
   private

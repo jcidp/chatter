@@ -124,8 +124,11 @@ class ApiClient {
     return response.data;
   }
 
-  public async getUsers(): Promise<User[]> {
-    const response: AxiosResponse = await this.axiosInstance.get("/users");
+  public async getUsers(group_id: string | undefined = ""): Promise<User[]> {
+    const optionalPath = `/group/${group_id}`;
+    const response: AxiosResponse = await this.axiosInstance.get(
+      `/users${optionalPath}`,
+    );
     return response.data;
   }
 
@@ -229,6 +232,14 @@ class ApiClient {
   public async leaveGroup(id: string) {
     const response: AxiosResponse = await this.axiosInstance.delete(
       `/groups/${id}/members`,
+    );
+    return response.data;
+  }
+
+  public async addUsersToGroup(id: string, user_ids: number[]): Promise<Group> {
+    const response: AxiosResponse = await this.axiosInstance.post(
+      `/groups/${id}/members`,
+      { user_ids },
     );
     return response.data;
   }

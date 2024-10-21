@@ -15,12 +15,14 @@ Rails.application.routes.draw do
     resources :chats, only: [:index, :show, :create]
     resources :messages, only: [:create]
     resources :users, only: [:index, :show]
+    get "users/group/:group_id", to: "users#index"
     resource :avatar, only: [:update]
     resources :groups, only: [:show, :create, :update]
     put "groups/:id/photo", to: "groups#update_photo"
     post "groups/:id/admins/:user_id", to: "groups#add_admin"
     delete "groups/:id/members/:user_id", to: "groups#remove_member"
     delete "groups/:id/members", to: "groups#leave"
+    post "groups/:id/members", to: "groups#add_members"
   end
 
   get "up" => "rails/health#show", as: :rails_health_check

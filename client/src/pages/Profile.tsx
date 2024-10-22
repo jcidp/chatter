@@ -1,3 +1,4 @@
+import ConfirmationModal from "@/components/ConfirmationModal";
 import SelectUsers from "@/components/SelectUsers";
 import {
   AlertDialog,
@@ -348,19 +349,18 @@ const Profile = () => {
                     )}
                     {isEditable && !member.is_admin && (
                       <>
-                        <Button
+                        <ConfirmationModal
+                          triggerText="Make admin"
                           variant="ghost"
-                          onClick={() => handleMakeAdmin(member.id)}
-                        >
-                          Make admin
-                        </Button>
-                        <Button
+                          onConfirm={() => handleMakeAdmin(member.id)}
+                        />
+
+                        <ConfirmationModal
+                          triggerText="Remove"
                           variant="ghost"
                           className="hover:bg-destructive/90 hover:text-background"
-                          onClick={() => handleRemoveMember(member.id)}
-                        >
-                          Remove
-                        </Button>
+                          onConfirm={() => handleRemoveMember(member.id)}
+                        />
                       </>
                     )}
                   </div>
@@ -368,13 +368,12 @@ const Profile = () => {
               </Card>
             ))}
           </div>
-          <Button
+          <ConfirmationModal
+            triggerText="Leave group"
             variant="destructive"
             className="my-4"
-            onClick={handleLeaveGroup}
-          >
-            Leave group
-          </Button>
+            onConfirm={handleLeaveGroup}
+          />
         </div>
       )}
     </div>

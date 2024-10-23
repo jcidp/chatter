@@ -18,7 +18,7 @@ class Api::AvatarsController < ApplicationController
       p image
       processed_image = ImageProcessing::MiniMagick
         .source(image)
-        .resize_to_limit(360, 360)
+        .resize_to_fill(360, 360)
         .convert("jpg")
         .saver(quality: 80)
         .call

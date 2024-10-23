@@ -125,7 +125,7 @@ class ApiClient {
   }
 
   public async getUsers(group_id: string | undefined = ""): Promise<User[]> {
-    const optionalPath = `/group/${group_id}`;
+    const optionalPath = group_id ? `/group/${group_id}` : "";
     const response: AxiosResponse = await this.axiosInstance.get(
       `/users${optionalPath}`,
     );

@@ -1,17 +1,16 @@
 class UserSerializer < ActiveModel::Serializer
   include Rails.application.routes.url_helpers
-  attributes :id, :email, :username, :bio, :avatar  
-  
+  attributes :id, :email, :username, :bio, :avatar
   attribute :bio, if: :include_bio?
-  attribute :is_admin, if: :include_is_admin?
+  attribute :admin?, key: :is_admin, if: :include_is_admin?
 
   def avatar
-    if object.avatar.attached?
-      if instance_options[:small]
-        small_avatar
-      else
-        full_size_avatar
-      end
+    return unless object.avatar.attached?
+
+    if instance_options[:small]
+      small_avatar
+    else
+      full_size_avatar
     end
   end
 
@@ -24,7 +23,7 @@ class UserSerializer < ActiveModel::Serializer
     "#{Rails.configuration.x.api_base_url}#{rails_representation_path(variant, only_path: true)}"
   end
 
-  def is_admin
+  def admin?
     object.chat_users.find_by(chat_id: instance_options[:chat_id])&.is_admin || false
   end
 

@@ -18,90 +18,90 @@ class Api::GroupsController < ApplicationController
       render json: @chat, status: :created
     rescue ActiveRecord::RecordInvalid => e
       render json: { error: e.message }, status: :unprocessable_entity
-    end 
+    end
   end
 
   def update
     @group = Current.user.groups.find(params[:id])
-    if @group.is_admin? Current.user
+    if @group.admin? Current.user
       @group.update!(group_params)
       render json: @group, status: :ok
     else
-      render json: {error: "Only admins can edit a group" }, status: :unauthorized
+      render json: { error: "Only admins can edit a group" }, status: :unauthorized
     end
   end
 
   def update_photo
     @group = Current.user.groups.find(params[:id])
-    if @group.is_admin? Current.user
+    if @group.admin? Current.user
       if @group.photo.attach(
-          io: process_image(params[:photo]),
-          filename: params[:photo].original_filename,
-          content_type: params[:photo].content_type
-        )
+        io: process_image(params[:photo]),
+        filename: params[:photo].original_filename,
+        content_type: params[:photo].content_type
+      )
         render json: @group, status: :ok
       else
         render json: { errors: @group.errors.full_messages }, status: :unprocessable_entity
       end
     else
-      render json: {error: "Only admins can edit a group" }, status: :unauthorized
+      render json: { error: "Only admins can edit a group" }, status: :unauthorized
     end
   end
 
   def add_members
     @group = Current.user.groups.find(params[:id])
-    if @group.is_admin? Current.user.id
+    if @group.admin? Current.user.id
       begin
         @group.add_users(params[:user_ids])
         render json: @group, include_members: true, status: :ok
       rescue ActiveRecord::RecordInvalid => e
         render json: { error: e.message }, status: :unprocessable_entity
-      end 
+      end
     else
-      render json: {error: "Only admins can manage group members" }, status: :unauthorized
+      render json: { error: "Only admins can manage group members" }, status: :unauthorized
     end
   end
 
   def add_admin
     @group = Current.user.groups.find(params[:id])
-    if @group.is_admin? Current.user.id
+    if @group.admin? Current.user.id
       @group.make_admin(params[:user_id])
       render json: @group, include_members: true, status: :ok
     else
-      render json: {error: "Only admins can manage group members" }, status: :unauthorized
+      render json: { error: "Only admins can manage group members" }, status: :unauthorized
     end
   end
 
   def remove_member
     @group = Current.user.groups.find(params[:id])
-    if @group.is_admin? Current.user.id
+    if @group.admin? Current.user.id
       @group.remove_member(params[:user_id])
       render json: @group, include_members: true, status: :ok
     else
-      render json: {error: "Only admins can manage group members" }, status: :unauthorized
+      render json: { error: "Only admins can manage group members" }, status: :unauthorized
     end
   end
 
   def leave
     @group = Current.user.groups.find(params[:id])
     @group.remove_member(Current.user.id)
-    render json: {message: "Success"}, status: :ok
+    render json: { message: "Success" }, status: :ok
   end
 
   private
-    def group_params
-      params.require(:group).permit(:name, :description)
-    end
 
-    def process_image(image)
-      p image
-      processed_image = ImageProcessing::MiniMagick
-        .source(image)
-        .resize_to_fill(360, 360)
-        .convert("jpg")
-        .saver(quality: 80)
-        .call
+  def group_params
+    params.require(:group).permit(:name, :description)
+  end
 
-      File.open(processed_image.path)
-    end
+  def process_image(image)
+    processed_image = ImageProcessing::MiniMagick
+                      .source(image)
+                      .resize_to_fill(360, 360)
+                      .convert("jpg")
+                      .saver(quality: 80)
+                      .call
+
+    File.open(processed_image.path)
+  end
 end

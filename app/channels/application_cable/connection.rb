@@ -7,13 +7,14 @@ module ApplicationCable
     end
 
     private
-      def find_verified_user
-        token = request.params[:token]
-        if token
-          session = Session.find_signed(token)
-          return session.user if session
-        end
-          reject_unauthorized_connection
+
+    def find_verified_user
+      token = request.params[:token]
+      if token
+        session = Session.find_signed(token)
+        return session.user if session
       end
+      reject_unauthorized_connection
+    end
   end
 end

@@ -9,9 +9,9 @@ class User < ApplicationRecord
   end
 
   has_many :sessions, dependent: :destroy
-  has_many :chat_users
+  has_many :chat_users, dependent: :destroy
   has_many :chats, through: :chat_users
-  has_many :messages, inverse_of: "author"
+  has_many :messages, inverse_of: "author", dependent: :destroy
   has_many :groups, through: :chats
   has_one_attached :avatar
 
@@ -30,9 +30,9 @@ class User < ApplicationRecord
     sessions.where.not(id: Current.session).delete_all
   end
 
-  def as_json(options={})
+  def as_json(options = {})
     super({
-      only: [:id, :email, :username],
+      only: [:id, :email, :username]
     }.merge(options))
   end
 end

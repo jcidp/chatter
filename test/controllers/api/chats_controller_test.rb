@@ -18,6 +18,7 @@ class Api::ChatsControllerTest < ActionDispatch::IntegrationTest
         name: @other_user.username,
         image: nil,
         profile_id: @other_user.id,
+        type: "profile",
         last_message: {
           text: "MyText",
           created_at: @user.chats[0].messages&.last&.created_at
@@ -28,6 +29,7 @@ class Api::ChatsControllerTest < ActionDispatch::IntegrationTest
         name: @other_user.username,
         image: nil,
         profile_id: @other_user.id,
+        type: "profile",
         last_message: nil
       }
     ]
@@ -44,6 +46,7 @@ class Api::ChatsControllerTest < ActionDispatch::IntegrationTest
       name: @other_user.username,
       image: nil,
       profile_id: @other_user.id,
+      type: "profile",
       messages: @messages
     }
     get api_chat_url(@chat), headers: default_headers
@@ -60,9 +63,10 @@ class Api::ChatsControllerTest < ActionDispatch::IntegrationTest
 
   test "should not create a new chat if it already exists, and return it instead" do
     @other_user = users(:john_smith)
+    @chat_two = chats(:two)
     assert_no_difference("Chat.count") do
       post api_chats_url, params: { user_id: @other_user.id }, headers: default_headers
     end
-    assert_equal [@user, @other_user], Chat.last.users.order(:id)
+    assert_equal [@user, @other_user], @chat_two.users.order(:id)
   end
 end

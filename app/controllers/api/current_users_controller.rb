@@ -10,7 +10,8 @@ class Api::CurrentUsersController < ApplicationController
   end
 
   private
-    def user_params
-      params.require(:current_user).permit(:username, :bio)
-    end
+
+  def user_params
+    params.require(:current_user).permit(:username, :bio)
+  end
 end

@@ -1,7 +1,8 @@
 class Api::ChatsController < ApplicationController
   def index
     chats = Current.user.chats.ordered
-    render json: chats, each_serializer: ChatSerializer, current_user: Current.user, include_last_message: true, status: :ok
+    render json: chats, each_serializer: ChatSerializer, current_user: Current.user, include_last_message: true,
+           status: :ok
   end
 
   def show

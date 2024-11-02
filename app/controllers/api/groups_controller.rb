@@ -5,20 +5,15 @@ class Api::GroupsController < ApplicationController
   end
 
   def create
-    @user_ids = params[:user_ids]
-    begin
-      ActiveRecord::Base.transaction do
-        @chat = Chat.create!
-        Group.create!(chat_id: @chat.id, name: params[:name], description: params[:description])
-        @chat.chat_users.create!(user_id: Current.user.id, is_admin: true)
-        @user_ids.each do |user_id|
-          @chat.chat_users.create!(user_id: user_id, is_admin: false)
-        end
-      end
-      render json: @chat, status: :created
-    rescue ActiveRecord::RecordInvalid => e
-      render json: { error: e.message }, status: :unprocessable_entity
-    end
+    Group.create_with_chat!(
+      name: params[:name],
+      description: params[:description],
+      admin: Current.user,
+      user_ids: params[:user_ids]
+    )
+    render json: @chat, status: :created
+  rescue ActiveRecord::RecordInvalid => e
+    render json: { error: e.message }, status: :unprocessable_entity
   end
 
   def update
@@ -33,19 +28,12 @@ class Api::GroupsController < ApplicationController
 
   def update_photo
     @group = Current.user.groups.find(params[:id])
-    if @group.admin? Current.user
-      if @group.photo.attach(
-        io: process_image(params[:photo]),
-        filename: params[:photo].original_filename,
-        content_type: params[:photo].content_type
-      )
-        render json: @group, status: :ok
-      else
-        render json: { errors: @group.errors.full_messages }, status: :unprocessable_entity
-      end
-    else
-      render json: { error: "Only admins can edit a group" }, status: :unauthorized
-    end
+    @group.update_photo!(user: Current.user, photo: params[:photo])
+    render json: @group, status: :ok
+  rescue Group::Unauthorized => e
+    render json: { error: e.message }, status: :unauthorized
+  rescue ActiveRecord::RecordInvalid
+    render json: { errors: @group.errors.full_messages }, status: :unprocessable_entity
   end
 
   def add_members
@@ -92,16 +80,5 @@ class Api::GroupsController < ApplicationController
 
   def group_params
     params.require(:group).permit(:name, :description)
-  end
-
-  def process_image(image)
-    processed_image = ImageProcessing::MiniMagick
-                      .source(image)
-                      .resize_to_fill(360, 360)
-                      .convert("jpg")
-                      .saver(quality: 80)
-                      .call
-
-    File.open(processed_image.path)
   end
 end

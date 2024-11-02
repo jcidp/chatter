@@ -1,7 +1,7 @@
 class Api::SessionsController < ApplicationController
   skip_before_action :authenticate, only: :create
 
-  before_action :set_session, only: %i[ show destroy ]
+  before_action :set_session, only: [:show, :destroy]
 
   def index
     render json: Current.user.sessions.order(created_at: :desc)
@@ -12,7 +12,7 @@ class Api::SessionsController < ApplicationController
   end
 
   def create
-    if user = User.authenticate_by(email: params[:email], password: params[:password])
+    if (user = User.authenticate_by(email: params[:email], password: params[:password]))
       @session = user.sessions.create!
       response.set_header "X-Session-Token", @session.signed_id(expires_in: 30.minutes)
 
@@ -23,14 +23,13 @@ class Api::SessionsController < ApplicationController
   end
 
   def destroy
-    if @session
-      @session.destroy
-    end
-    render json: { message: 'Logged out successfully' }, status: :ok
+    @session&.destroy
+    render json: { message: "Logged out successfully" }, status: :ok
   end
 
   private
-    def set_session
-      @session = Current.session
-    end
+
+  def set_session
+    @session = Current.session
+  end
 end

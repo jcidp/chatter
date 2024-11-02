@@ -8,7 +8,7 @@ class Api::Identity::PasswordResetsController < ApplicationController
   end
 
   def create
-    if @user = User.find_by(email: params[:email], verified: true)
+    if (@user = User.find_by(email: params[:email], verified: true))
       UserMailer.with(user: @user).password_reset.deliver_later
     else
       render json: { error: "You can't reset your password until you verify your email" }, status: :bad_request
@@ -24,13 +24,14 @@ class Api::Identity::PasswordResetsController < ApplicationController
   end
 
   private
-    def set_user
-      @user = User.find_by_token_for!(:password_reset, params[:sid])
-    rescue StandardError
-      render json: { error: "That password reset link is invalid" }, status: :bad_request
-    end
 
-    def user_params
-      params.permit(:password, :password_confirmation)
-    end
+  def set_user
+    @user = User.find_by_token_for!(:password_reset, params[:sid])
+  rescue StandardError
+    render json: { error: "That password reset link is invalid" }, status: :bad_request
+  end
+
+  def user_params
+    params.permit(:password, :password_confirmation)
+  end
 end

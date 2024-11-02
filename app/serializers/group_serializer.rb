@@ -5,12 +5,12 @@ class GroupSerializer < ActiveModel::Serializer
   attribute :members, if: :include_members?
 
   def photo
-    if object.photo.attached?
-      if instance_options[:small]
-        small_photo
-      else
-        full_size_photo
-      end
+    return unless object.photo.attached?
+
+    if instance_options[:small]
+      small_photo
+    else
+      full_size_photo
     end
   end
 

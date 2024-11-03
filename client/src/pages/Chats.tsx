@@ -1,24 +1,13 @@
-import { useEffect, useState } from "react";
-import ApiClient from "@/helpers/ApiClient";
-import { ChatI } from "@/types";
 import ChatCard from "@/components/ChatCard";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import useChats from "@/hooks/useChats";
 
 function Chats() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [chats, setChats] = useState<ChatI[] | null>(null);
+  const { chats, loading, error } = useChats();
 
-  useEffect(() => {
-    const getChats = async () => {
-      const chats = await ApiClient.getChats();
-      setChats(chats);
-      setIsLoading(false);
-    };
-    getChats();
-  }, []);
-
-  if (isLoading) return <h1>Loading...</h1>;
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <div>
@@ -33,7 +22,11 @@ function Chats() {
         </Link>
       </div>
       <div className="grid gap-y-2">
-        {chats?.map((chat) => <ChatCard {...chat} key={chat.id} />)}
+        {chats.length ? (
+          chats.map((chat) => <ChatCard {...chat} key={chat.id} />)
+        ) : (
+          <h2>Create a chat or a group to start chatting!</h2>
+        )}
       </div>
     </div>
   );

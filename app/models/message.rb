@@ -20,11 +20,13 @@ class Message < ApplicationRecord
     end
 
     if message.save
-      ChatChannel.broadcast_to(
-        chat,
-        message: MessageSerializer.new(message).as_json,
-        type: "new_message"
-      )
+      chat.users.each do |user|
+        GlobalChatChannel.broadcast_to(
+          user,
+          chat_id: chat.id,
+          message: MessageSerializer.new(message).as_json
+        )
+      end
     end
 
     message

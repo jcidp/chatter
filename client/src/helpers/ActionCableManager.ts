@@ -46,7 +46,7 @@ class ActionCableManager {
   }
 
   public subscribeToChannel(
-    identifier: { id: string; channel: string },
+    identifier: { channel: string },
     params: object = {},
   ): Subscription {
     if (!this.consumer) {

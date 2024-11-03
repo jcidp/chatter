@@ -16,6 +16,7 @@ import Chat from "./pages/Chat";
 import Users from "./pages/Users";
 import Profile from "./pages/Profile";
 import NewGroup from "./pages/NewGroup";
+import ChatProvider from "./helpers/ChatProvider";
 
 const ProtectedRoutes = ({ children }: { children?: ReactNode }) => {
   const { isAuthenticated } = useAuth();
@@ -38,7 +39,9 @@ const Router = () => {
           path: "/",
           element: (
             <ProtectedRoutes>
-              <App />
+              <ChatProvider>
+                <App />
+              </ChatProvider>
             </ProtectedRoutes>
           ),
           children: [

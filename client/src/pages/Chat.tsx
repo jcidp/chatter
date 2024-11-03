@@ -1,14 +1,10 @@
 import { Card } from "@/components/ui/card";
-import ApiClient from "@/helpers/ApiClient";
-import { ChatI, Message } from "@/types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useAuth } from "@/helpers/AuthProvider";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Subscription } from "@rails/actioncable";
-import ActionCableManager from "@/helpers/ActionCableManager";
 import {
   ImageIcon,
   SendIcon,
@@ -16,69 +12,25 @@ import {
   UsersRoundIcon,
 } from "lucide-react";
 import { Label } from "@/components/ui/label";
+import useChat from "@/hooks/useChat";
 
 const Chat = () => {
   const { id: chatId } = useParams();
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [chatData, setChatData] = useState<ChatI>();
+  const { messages, chatData, loading, error, sendMessage } = useChat(
+    chatId ?? "",
+  );
   const [text, setText] = useState("");
-  const [image, setImage] = useState<File | null>(null);
-  const [subscription, setSubscription] = useState<Subscription | null>(null);
+  const [image, setImage] = useState<File | undefined>(undefined);
   const { user } = useAuth();
-
-  useEffect(() => {
-    if (!chatId) return;
-    const getChat = async () => {
-      const { id, name, image, profile_id, messages, type } =
-        await ApiClient.getChat(chatId);
-      if (!messages) return;
-      setMessages(messages);
-      setChatData({ id, name, image, profile_id, type });
-    };
-    getChat();
-  }, [chatId]);
-
-  useEffect(() => {
-    if (!chatId) return;
-    const onReceived = (data: any) => {
-      if (data.type === "new_message") {
-        setMessages((prev) => [data.message, ...prev]);
-      }
-    };
-    const subscription = ActionCableManager.subscribeToChannel(
-      {
-        channel: "ChatChannel",
-        id: chatId,
-      },
-      {
-        received: onReceived,
-      },
-    );
-    setSubscription(subscription);
-    return () => {
-      console.log("Unsubscribing...");
-      subscription?.unsubscribe();
-    };
-  }, [chatId]);
 
   const handleSendMessage = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const trimmedText = text.trim();
-    if (!chatId || (!trimmedText && !image) || !subscription) return;
-    const formData = new FormData();
-    formData.append("chat_id", chatId);
-    if (trimmedText) {
-      formData.append("text", trimmedText);
-    }
-    if (image) {
-      formData.append("image", image);
-    }
     try {
-      await ApiClient.postMessage(formData);
+      await sendMessage(chatId ?? "", text, image);
       setText("");
-      setImage(null);
+      setImage(undefined);
     } catch (error) {
-      console.log("Unable to send message...");
+      console.log("Failed to send message");
     }
   };
 
@@ -91,6 +43,9 @@ const Chat = () => {
       setImage(e.target.files[0]);
     }
   };
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="flex-grow flex flex-col overflow-hidden p-1">

@@ -1,3 +1,5 @@
+import { Subscription } from "@rails/actioncable";
+
 interface User {
   id: number;
   username: string;
@@ -19,6 +21,7 @@ interface ChatI {
 interface Message {
   created_at: string;
   user_id: number;
+  chat_id: string;
   text?: string;
   image?: string;
 }
@@ -32,4 +35,9 @@ interface Group {
   photo?: string;
 }
 
-export type { User, ChatI, Message, Group };
+interface ChatSubscription {
+  chatId: string;
+  subscription: Subscription;
+}
+
+export type { User, ChatI, Message, Group, ChatSubscription };

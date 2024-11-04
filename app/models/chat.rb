@@ -6,6 +6,15 @@ class Chat < ApplicationRecord
 
   self.implicit_order_column = "created_at"
 
+  after_create_commit do
+    users.each do |user|
+      GlobalChatChannel.broadcast_to(
+        user,
+        chat: ChatSerializer.new(self, current_user: user, include_last_message: true).as_json
+      )
+    end
+  end
+
   def self.ordered
     all.sort { |a, b| (b.last_message_at || b.created_at) <=> (a.last_message_at || a.created_at) }
   end

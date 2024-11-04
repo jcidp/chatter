@@ -35,9 +35,15 @@ interface Group {
   photo?: string;
 }
 
-interface ChatSubscription {
+interface ChatMessages {
   chatId: string;
-  subscription: Subscription;
+  messages: Message[];
 }
 
-export type { User, ChatI, Message, Group, ChatSubscription };
+interface cableData {
+  chat_id?: string;
+  message?: Message;
+  chat?: ChatI;
+}
+
+export type { User, ChatI, Message, Group, ChatMessages, cableData };

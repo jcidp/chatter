@@ -16,7 +16,7 @@ const useChat = (chatId: string) => {
         const { id, name, image, profile_id, messages, type } =
           await ApiClient.getChat(chatId);
         if (!messages) return;
-        loadMessages(messages);
+        loadMessages(chatId, messages);
         setChatData({ id, name, image, profile_id, type });
       } catch (error) {
         setError(

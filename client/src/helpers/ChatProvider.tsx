@@ -1,4 +1,4 @@
-import { ChatI, Message } from "@/types";
+import { cableData, ChatI, ChatMessages, Message } from "@/types";
 import { createContext, useContext, useEffect, useState } from "react";
 import ApiClient from "./ApiClient";
 import ActionCableManager from "./ActionCableManager";
@@ -9,7 +9,7 @@ interface ChatContextType {
   messages: Message[];
   sendMessage: (chatId: string, text?: string, image?: File) => Promise<void>;
   loadChats: (newChats: ChatI[]) => void;
-  loadMessages: (newMessages: Message[]) => void;
+  loadMessages: (chatId: string, newMessages: Message[]) => void;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -18,13 +18,15 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [chats, setChats] = useState<ChatI[]>([]);
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [chatMessages, setChatMessages] = useState<ChatMessages>({
+    chatId: "",
+    messages: [],
+  });
   const [subscription, setSubscription] = useState<Subscription | null>(null);
 
   useEffect(() => {
     const onNewMessage = (chatId: string, message: Message) => {
       setChats((prevChats) =>
-        // Todo: Handle getting message from new chat
         prevChats.map((chat) =>
           chat.id === chatId
             ? {
@@ -34,11 +36,18 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
             : chat,
         ),
       );
-      setMessages((prevMessages) =>
-        prevMessages[0]?.chat_id === chatId
-          ? [message, ...prevMessages]
-          : prevMessages,
+      setChatMessages((prevChatMessages) =>
+        prevChatMessages.chatId === chatId
+          ? {
+              ...prevChatMessages,
+              messages: [message, ...prevChatMessages.messages],
+            }
+          : prevChatMessages,
       );
+    };
+
+    const onNewChat = (chat: ChatI) => {
+      setChats((prevChats) => [chat, ...prevChats]);
     };
 
     const subscription = ActionCableManager.subscribeToChannel(
@@ -46,9 +55,12 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
         channel: "GlobalChatChannel",
       },
       {
-        received: (data) => {
-          console.log("Receiving data:", data);
-          onNewMessage(data.chat_id, data.message);
+        received: (data: cableData) => {
+          if (data.message && data.chat_id) {
+            onNewMessage(data.chat_id, data.message);
+          } else if (data.chat) {
+            onNewChat(data.chat);
+          }
         },
       },
     );
@@ -63,8 +75,8 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
     setChats(newChats);
   };
 
-  const loadMessages = (newMessages: Message[]) => {
-    setMessages(newMessages);
+  const loadMessages = (chatId: string, newMessages: Message[]) => {
+    setChatMessages({ chatId, messages: newMessages });
   };
 
   const sendMessage = async (chatId: string, text?: string, image?: File) => {
@@ -83,7 +95,13 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <ChatContext.Provider
-      value={{ chats, messages, sendMessage, loadChats, loadMessages }}
+      value={{
+        chats,
+        messages: chatMessages.messages,
+        sendMessage,
+        loadChats,
+        loadMessages,
+      }}
     >
       {children}
     </ChatContext.Provider>

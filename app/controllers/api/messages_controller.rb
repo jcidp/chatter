@@ -1,7 +1,7 @@
 class Api::MessagesController < ApplicationController
   def create
     @chat = Current.user.chats.find(params[:chat_id])
-    @message = Message.create_and_broadcast!(
+    @message = Message.create_with_image!(
       chat: @chat,
       user_id: Current.user.id,
       text: params[:text],

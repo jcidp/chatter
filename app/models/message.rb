@@ -6,9 +6,19 @@ class Message < ApplicationRecord
   validates :text, presence: true, if: -> { image.blank? }
   validates :image, presence: true, if: -> { text.blank? }
 
+  after_create_commit do
+    chat.users.each do |user|
+      GlobalChatChannel.broadcast_to(
+        user,
+        chat_id: chat.id,
+        message: MessageSerializer.new(self).as_json
+      )
+    end
+  end
+
   scope :sorted, -> { order(id: :desc) }
 
-  def self.create_and_broadcast!(chat:, user_id:, text:, image: nil)
+  def self.create_with_image!(chat:, user_id:, text:, image: nil)
     message = chat.messages.build(user_id: user_id, text: text)
 
     if image.present?
@@ -19,15 +29,7 @@ class Message < ApplicationRecord
       )
     end
 
-    if message.save
-      chat.users.each do |user|
-        GlobalChatChannel.broadcast_to(
-          user,
-          chat_id: chat.id,
-          message: MessageSerializer.new(message).as_json
-        )
-      end
-    end
+    message.save!
 
     message
   end

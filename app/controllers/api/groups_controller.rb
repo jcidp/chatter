@@ -5,13 +5,13 @@ class Api::GroupsController < ApplicationController
   end
 
   def create
-    Group.create_with_chat!(
+    chat = Group.create_with_chat!(
       name: params[:name],
       description: params[:description],
       admin: Current.user,
       user_ids: params[:user_ids]
     )
-    render json: @chat, status: :created
+    render json: chat, status: :created
   rescue ActiveRecord::RecordInvalid => e
     render json: { error: e.message }, status: :unprocessable_entity
   end

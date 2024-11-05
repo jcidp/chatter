@@ -1,5 +1,3 @@
-import { Subscription } from "@rails/actioncable";
-
 interface User {
   id: number;
   username: string;

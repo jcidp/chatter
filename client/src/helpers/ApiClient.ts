@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, AxiosResponse } from "axios";
-import { ChatI, Group, Message, User } from "../types";
+import { ChatI, Group, User } from "../types";
 import ActionCableManager from "./ActionCableManager";
 
 const TOKEN_KEY = "auth_token";

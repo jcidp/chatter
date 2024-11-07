@@ -27,13 +27,18 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const onNewMessage = (chatId: string, message: Message) => {
       setChats((prevChats) =>
-        prevChats.map((chat) =>
-          chat.id === chatId
-            ? {
-                ...chat,
-                last_message: message,
-              }
-            : chat,
+        prevChats.reduce(
+          (arr: ChatI[], chat) =>
+            chat.id === chatId
+              ? [
+                  {
+                    ...chat,
+                    last_message: message,
+                  },
+                  ...arr,
+                ]
+              : [...arr, chat],
+          [],
         ),
       );
       setChatMessages((prevChatMessages) =>

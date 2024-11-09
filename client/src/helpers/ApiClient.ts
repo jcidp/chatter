@@ -67,7 +67,7 @@ class ApiClient {
     const response: AxiosResponse = await this.axiosInstance.post("sign_up", {
       email,
       password,
-      passwordConfirmation,
+      password_confirmation: passwordConfirmation,
     });
     const user = response.data;
     if (!response.headers) throw Error("No headers");

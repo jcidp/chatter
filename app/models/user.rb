@@ -16,8 +16,8 @@ class User < ApplicationRecord
   has_one_attached :avatar
 
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
-  validates :password, allow_nil: true, length: { minimum: 12 }
-  validates :username, presence: true, length: { maximum: 24 }
+  validates :password, allow_nil: true, length: { minimum: 8 }
+  validates :username, presence: true, uniqueness: true, length: { maximum: 24 }
   validates :bio, length: { maximum: 80 }
 
   normalizes :email, with: -> { _1.strip.downcase }

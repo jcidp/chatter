@@ -3,7 +3,6 @@ class Api::RegistrationsController < ApplicationController
 
   def create
     @user = User.new(user_params)
-    @user.username = params[:email].split("@")[0]
 
     if @user.save
       send_email_verification
@@ -18,7 +17,7 @@ class Api::RegistrationsController < ApplicationController
   private
 
   def user_params
-    params.permit(:email, :password, :password_confirmation)
+    params.permit(:email, :username, :password, :password_confirmation)
   end
 
   def send_email_verification

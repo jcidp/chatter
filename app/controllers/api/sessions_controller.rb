@@ -18,7 +18,7 @@ class Api::SessionsController < ApplicationController
 
       render json: user, status: :created
     else
-      render json: { error: "That email or password is incorrect" }, status: :unauthorized
+      render json: { root: "Email or password is invalid" }, status: :unauthorized
     end
   end
 

@@ -1,15 +1,11 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { User } from "../types";
+import { Login, SignUp, User } from "../types";
 import ApiClient from "./ApiClient";
 
 interface AuthContextType {
   user: User | null;
-  signUp: (
-    email: string,
-    password: string,
-    passwordConfirmation: string,
-  ) => Promise<void>;
-  login: (email: string, password: string) => Promise<void>;
+  signUp: SignUp;
+  login: Login;
   logout: () => Promise<void>;
   isAuthenticated: boolean;
   updateUser: (newUser: User) => void;
@@ -42,21 +38,13 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     initAuth();
   }, []);
 
-  const signUp = async (
-    email: string,
-    password: string,
-    passwordConfirmation: string,
-  ) => {
-    const userData = await ApiClient.signUp(
-      email,
-      password,
-      passwordConfirmation,
-    );
+  const signUp: SignUp = async (signUpValues) => {
+    const userData = await ApiClient.signUp(signUpValues);
     setUser(userData);
   };
 
-  const login = async (email: string, password: string) => {
-    const userData = await ApiClient.login(email, password);
+  const login: Login = async (loginValues) => {
+    const userData = await ApiClient.login(loginValues);
     setUser(userData);
   };
 

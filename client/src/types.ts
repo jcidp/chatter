@@ -38,10 +38,31 @@ interface ChatMessages {
   messages: Message[];
 }
 
-interface cableData {
+interface CableData {
   chat_id?: string;
   message?: Message;
   chat?: ChatI;
 }
 
-export type { User, ChatI, Message, Group, ChatMessages, cableData };
+interface LoginParams {
+  email: string;
+  password: string;
+}
+
+interface SignUpParams extends LoginParams {
+  confirmPassword: string;
+}
+
+type SignUp = (signUpParams: SignUpParams) => Promise<void>;
+type Login = (loginParams: LoginParams) => Promise<void>;
+
+export type {
+  User,
+  ChatI,
+  Message,
+  Group,
+  ChatMessages,
+  CableData,
+  SignUp,
+  Login,
+};

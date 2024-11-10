@@ -19,9 +19,9 @@ const SignUp = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <AccountForm isSignUp />
+          <AccountForm type="signUp" />
           <div className="mt-4 text-center text-sm">
-            Already have an account?{" "}
+            <span>Already have an account? </span>
             <Link to="/login" className="underline">
               Login
             </Link>

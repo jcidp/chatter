@@ -1,4 +1,4 @@
-import { cableData, ChatI, ChatMessages, Message } from "@/types";
+import { CableData, ChatI, ChatMessages, Message } from "@/types";
 import { createContext, useContext, useEffect, useState } from "react";
 import ApiClient from "./ApiClient";
 import ActionCableManager from "./ActionCableManager";
@@ -60,7 +60,7 @@ const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
         channel: "GlobalChatChannel",
       },
       {
-        received: (data: cableData) => {
+        received: (data: CableData) => {
           if (data.message && data.chat_id) {
             onNewMessage(data.chat_id, data.message);
           } else if (data.chat) {

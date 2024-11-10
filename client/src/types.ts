@@ -50,6 +50,7 @@ interface LoginParams {
 }
 
 interface SignUpParams extends LoginParams {
+  username: string;
   confirmPassword: string;
 }
 

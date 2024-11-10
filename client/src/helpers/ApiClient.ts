@@ -59,15 +59,10 @@ class ApiClient {
     ActionCableManager.clearToken();
   }
 
-  public async signUp({
-    email,
-    password,
-    confirmPassword,
-  }: Parameters<SignUp>[0]): Promise<User> {
+  public async signUp(signUpParams: Parameters<SignUp>[0]): Promise<User> {
     const response: AxiosResponse = await this.axiosInstance.post("sign_up", {
-      email,
-      password,
-      password_confirmation: confirmPassword,
+      ...signUpParams,
+      password_confirmation: signUpParams.confirmPassword,
     });
     console.log("AxiosResponse:", response);
     const user = response.data;
@@ -77,11 +72,11 @@ class ApiClient {
     return user;
   }
 
-  public async login({ email, password }: Parameters<Login>[0]): Promise<User> {
-    const response: AxiosResponse = await this.axiosInstance.post("/login", {
-      email,
-      password,
-    });
+  public async login(loginParams: Parameters<Login>[0]): Promise<User> {
+    const response: AxiosResponse = await this.axiosInstance.post(
+      "/login",
+      loginParams,
+    );
     const user = response.data;
     if (!response.headers) throw Error("No headers");
     const token = response.headers.get("X-Session-Token");

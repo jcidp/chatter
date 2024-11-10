@@ -19,20 +19,20 @@ import { AxiosError } from "axios";
 import { Alert, AlertDescription } from "./ui/alert";
 
 const loginFormSchema = z.object({
-  email: z.string().email({
-    message: "Please enter a valid email address",
-  }),
+  email: z.string().email("Please enter a valid email address"),
   password: z.string(),
 });
 
 const signUpFormSchema = loginFormSchema
   .extend({
-    password: z.string().min(12, {
-      message: "Password must be at least 12 characters long",
-    }),
-    confirmPassword: z.string().min(12, {
-      message: "Password must be at least 12 characters long",
-    }),
+    username: z
+      .string()
+      .min(3, "Username must be at least 3 characters long")
+      .max(24, "Username must be at most 24 characters long"),
+    password: z.string().min(8, "Password must be at least 8 characters long"),
+    confirmPassword: z
+      .string()
+      .min(8, "Password must be at least 8 characters long"),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
@@ -124,6 +124,26 @@ const AccountForm = ({ type }: AccountFormProps) => {
             )}
           />
         </div>
+        {type === "signUp" && (
+          <div className="grid gap-2">
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Username</FormLabel>
+                  <FormControl>
+                    <Input {...field} placeholder="johndoe123" />
+                  </FormControl>
+                  <FormDescription hideOnError={true}>
+                    Username must be between 3 and 24 characters
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </div>
+        )}
         <div className="grid gap-2">
           <FormField
             control={form.control}
@@ -136,7 +156,7 @@ const AccountForm = ({ type }: AccountFormProps) => {
                 </FormControl>
                 {type === "signUp" && (
                   <FormDescription hideOnError={true}>
-                    Password must be at least 12 characters long
+                    Password must be at least 8 characters long
                   </FormDescription>
                 )}
                 <FormMessage />

@@ -57,6 +57,15 @@ interface SignUpParams extends LoginParams {
 type SignUp = (signUpParams: SignUpParams) => Promise<void>;
 type Login = (loginParams: LoginParams) => Promise<void>;
 
+interface HandleProfileSubmitParams {
+  username?: string;
+  bio?: string;
+}
+
+type HandleProfileSubmit = (
+  handleProfileSubmitParams: HandleProfileSubmitParams,
+) => Promise<void>;
+
 export type {
   User,
   ChatI,
@@ -66,4 +75,5 @@ export type {
   CableData,
   SignUp,
   Login,
+  HandleProfileSubmit,
 };

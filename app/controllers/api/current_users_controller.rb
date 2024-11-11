@@ -5,8 +5,11 @@ class Api::CurrentUsersController < ApplicationController
 
   def update
     @user = Current.user
-    @user.update!(user_params)
-    render json: @user, include_bio: true, status: :ok
+    if @user.update(user_params)
+      render json: @user, include_bio: true, status: :ok
+    else
+      render json: @user.errors, status: :unprocessable_entity
+    end
   end
 
   private

@@ -65,7 +65,6 @@ const AccountForm = ({ type }: AccountFormProps) => {
   });
 
   const onSubmit = async (values: FormValues) => {
-    console.log("Submitting...", values);
     setLoading(true);
     try {
       if (type === "login") {
@@ -74,7 +73,6 @@ const AccountForm = ({ type }: AccountFormProps) => {
         await signUp(values);
       }
     } catch (error) {
-      console.log("Error", error);
       if (error instanceof AxiosError) {
         Object.entries(error?.response?.data).forEach(([field, messages]) => {
           const formattedFiled =

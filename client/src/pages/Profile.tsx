@@ -1,4 +1,5 @@
 import ConfirmationModal from "@/components/ConfirmationModal";
+import ProfileForm from "@/components/ProfileForm";
 import SelectUsers from "@/components/SelectUsers";
 import {
   AlertDialog,
@@ -17,18 +18,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import ApiClient from "@/helpers/ApiClient";
 import { useAuth } from "@/helpers/AuthProvider";
-import { User } from "@/types";
-import {
-  CameraIcon,
-  CheckIcon,
-  PencilIcon,
-  UserRoundIcon,
-  UsersRoundIcon,
-  XIcon,
-} from "lucide-react";
+import { HandleProfileSubmit, User } from "@/types";
+import { CameraIcon, UserRoundIcon, UsersRoundIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 
@@ -38,8 +31,6 @@ const Profile = () => {
   const isGroup = location.pathname.startsWith("/group");
   const { id } = useParams();
   const [activeInput, setActiveInput] = useState("");
-  const [username, setUsername] = useState(user?.username);
-  const [bio, setBio] = useState(user?.bio);
   const [profile, setProfile] = useState<User | null>(null);
   const [groupMembers, setGroupMembers] = useState<User[]>([]);
   const [users, setUsers] = useState<User[]>([]);
@@ -50,14 +41,10 @@ const Profile = () => {
     if (!user) return;
     if (!id || (!isGroup && user.id === +id)) {
       setProfile(user);
-      setUsername(user.username);
-      setBio(user.bio);
     } else if (!isGroup) {
       const getUser = async () => {
         const user = await ApiClient.getUser(id);
         setProfile(user);
-        setUsername(user.username);
-        setBio(user.bio);
       };
       getUser();
     } else {
@@ -69,8 +56,6 @@ const Profile = () => {
           bio: group.description,
           avatar: group.photo,
         });
-        setUsername(group.name);
-        setBio(group.description);
         if (group.members) setGroupMembers(group.members);
       };
       getGroup();
@@ -110,18 +95,8 @@ const Profile = () => {
     setActiveInput(type === activeInput ? "" : type);
   };
 
-  const handleUpdate = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const type = e.target.id;
-    if (type === "username") setUsername(e.target.value);
-    else if (type === "bio") setBio(e.target.value);
-  };
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!(e.target instanceof HTMLFormElement)) return;
-    if (e.target.dataset.type === "username") {
+  const handleSubmit: HandleProfileSubmit = async ({ username, bio }) => {
+    if (username) {
       if (isGroup) {
         if (!id) return;
         const newGroup = await ApiClient.updateGroup(id, { name: username });
@@ -133,7 +108,7 @@ const Profile = () => {
         updateUser(newUser);
         setProfile(newUser);
       }
-    } else if (e.target.dataset.type === "bio") {
+    } else if (bio !== undefined) {
       if (isGroup) {
         if (!id) return;
         const newGroup = await ApiClient.updateGroup(id, { description: bio });
@@ -220,73 +195,24 @@ const Profile = () => {
           </Label>
         )}
       </div>
-      <form className="mt-8" data-type="username" onSubmit={handleSubmit}>
-        <span>
-          <strong>{isGroup ? "Name" : "Username"}:</strong>
-        </span>
-        {activeInput === "username" ? (
-          <>
-            <button type="submit">
-              <CheckIcon className="inline cursor-pointer mx-2 stroke-green-700" />
-            </button>
-            <XIcon
-              className="inline cursor-pointer stroke-red-700"
-              onClick={() => handleActivateInput("username")}
-            />
-            <Input
-              className="mt-2"
-              type="text"
-              id="username"
-              autoFocus
-              value={username}
-              onChange={handleUpdate}
-            />
-          </>
-        ) : (
-          <>
-            {isEditable && (
-              <PencilIcon
-                className="inline w-5 mx-2 cursor-pointer"
-                onClick={() => handleActivateInput("username")}
-              />
-            )}
-            <p className="mt-2 mb-8">{profile?.username}</p>
-          </>
-        )}
-      </form>
-      <form className="my-4" data-type="bio" onSubmit={handleSubmit}>
-        <span>
-          <strong>{isGroup ? "Description" : "Bio"}:</strong>
-        </span>
-        {activeInput === "bio" ? (
-          <>
-            <button type="submit">
-              <CheckIcon className="inline cursor-pointer mx-1 stroke-green-700" />
-            </button>
-            <XIcon
-              className="inline cursor-pointer stroke-red-700"
-              onClick={() => handleActivateInput("bio")}
-            />
-            <Textarea
-              className="mt-2"
-              id="bio"
-              autoFocus
-              value={bio}
-              onChange={handleUpdate}
-            />
-          </>
-        ) : (
-          <>
-            {isEditable && (
-              <PencilIcon
-                className="inline w-5 mx-2 cursor-pointer"
-                onClick={() => handleActivateInput("bio")}
-              />
-            )}
-            <p className="mt-2 mb-8">{profile?.bio || "(Empty)"}</p>
-          </>
-        )}
-      </form>
+      <ProfileForm
+        type={isGroup ? "group" : "user"}
+        fieldType="username"
+        defaultValue={{ username: profile?.username ?? "" }}
+        activeInput={activeInput}
+        handleActivateInput={handleActivateInput}
+        isEditable={isEditable}
+        handleSubmit={handleSubmit}
+      />
+      <ProfileForm
+        type={isGroup ? "group" : "user"}
+        fieldType="bio"
+        defaultValue={{ bio: profile?.bio ?? "" }}
+        activeInput={activeInput}
+        handleActivateInput={handleActivateInput}
+        isEditable={isEditable}
+        handleSubmit={handleSubmit}
+      />
       {isGroup && (
         <div>
           {isEditable && (

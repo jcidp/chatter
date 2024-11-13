@@ -16,7 +16,7 @@ class Api::SessionsController < ApplicationController
       @session = user.sessions.create!
       response.set_header "X-Session-Token", @session.signed_id(expires_in: 30.minutes)
 
-      render json: user, status: :created
+      render json: user, include_bio: true, status: :created
     else
       render json: { root: "Email or password is invalid" }, status: :unauthorized
     end

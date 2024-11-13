@@ -1,21 +1,6 @@
-import ConfirmationModal from "@/components/ConfirmationModal";
+import GroupDetails from "@/components/GroupDetails";
 import ProfileForm from "@/components/ProfileForm";
-import SelectUsers from "@/components/SelectUsers";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import ApiClient from "@/helpers/ApiClient";
@@ -23,7 +8,7 @@ import { useAuth } from "@/helpers/AuthProvider";
 import { HandleProfileSubmit, User } from "@/types";
 import { CameraIcon, UserRoundIcon, UsersRoundIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 
 const Profile = () => {
   const { user, updateUser } = useAuth();
@@ -33,9 +18,6 @@ const Profile = () => {
   const [activeInput, setActiveInput] = useState("");
   const [profile, setProfile] = useState<User | null>(null);
   const [groupMembers, setGroupMembers] = useState<User[]>([]);
-  const [users, setUsers] = useState<User[]>([]);
-  const [selectedUserIds, setSelectedUserIds] = useState<number[]>([]);
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (!user) return;
@@ -124,37 +106,6 @@ const Profile = () => {
     setActiveInput("");
   };
 
-  const handleMakeAdmin = async (user_id: number) => {
-    if (!id) return;
-    const updatedGroup = await ApiClient.makeUserGroupAdmin(id, user_id);
-    if (updatedGroup.members) setGroupMembers(updatedGroup.members);
-  };
-
-  const handleRemoveMember = async (user_id: number) => {
-    if (!id) return;
-    const updatedGroup = await ApiClient.removeGroupMember(id, user_id);
-    if (updatedGroup.members) setGroupMembers(updatedGroup.members);
-  };
-
-  const handleLeaveGroup = async () => {
-    if (!id) return;
-    await ApiClient.leaveGroup(id);
-    navigate("/");
-  };
-
-  const handleFetchUsers = async () => {
-    if (!id) return;
-    const availableUsers = await ApiClient.getUsers(id);
-    setUsers(availableUsers);
-  };
-
-  const handleAddUserSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!id) return;
-    const updatedGroup = await ApiClient.addUsersToGroup(id, selectedUserIds);
-    if (updatedGroup.members) setGroupMembers(updatedGroup.members);
-  };
-
   const isEditable =
     (isGroup &&
       user?.id &&
@@ -214,93 +165,12 @@ const Profile = () => {
         handleSubmit={handleSubmit}
       />
       {isGroup && (
-        <div>
-          {isEditable && (
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button className="mb-4" onClick={handleFetchUsers}>
-                  + Add members
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <form onSubmit={handleAddUserSubmit}>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Select users to add</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      Users selected ({selectedUserIds.length})
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <SelectUsers
-                    className="my-4"
-                    users={users}
-                    selectedUserIds={selectedUserIds}
-                    setSelectedUserIds={setSelectedUserIds}
-                  />
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction
-                      type="submit"
-                      disabled={!selectedUserIds.length}
-                    >
-                      Add users
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </form>
-              </AlertDialogContent>
-            </AlertDialog>
-          )}
-          <div className="grid gap-y-2">
-            {groupMembers.map((member) => (
-              <Card key={member.id} className="w-full">
-                <CardContent className="flex flex-wrap md:grid md:grid-cols-2 items-center gap-x-2 p-2 px-4 md:p-1">
-                  <div className="flex items-center gap-2">
-                    <Link to={`/profile/${member.id}`}>
-                      <Avatar>
-                        <AvatarImage
-                          src={member.avatar}
-                          alt={member.username}
-                        />
-                        <AvatarFallback>
-                          <UserRoundIcon />
-                        </AvatarFallback>
-                      </Avatar>
-                    </Link>
-                    <span>{member.username}</span>
-                  </div>
-                  <div
-                    className={`${member.is_admin ? "" : "w-full"} grid grid-cols-2 place-items-center`}
-                  >
-                    {member.is_admin && (
-                      <Badge className="my-2 col-span-2">Admin</Badge>
-                    )}
-                    {isEditable && !member.is_admin && (
-                      <>
-                        <ConfirmationModal
-                          triggerText="Make admin"
-                          variant="ghost"
-                          onConfirm={() => handleMakeAdmin(member.id)}
-                        />
-
-                        <ConfirmationModal
-                          triggerText="Remove"
-                          variant="ghost"
-                          className="hover:bg-destructive/90 hover:text-background"
-                          onConfirm={() => handleRemoveMember(member.id)}
-                        />
-                      </>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-          <ConfirmationModal
-            triggerText="Leave group"
-            variant="destructive"
-            className="my-4"
-            onConfirm={handleLeaveGroup}
-          />
-        </div>
+        <GroupDetails
+          groupId={id}
+          isEditable={isEditable}
+          groupMembers={groupMembers}
+          setGroupMembers={setGroupMembers}
+        />
       )}
     </div>
   );

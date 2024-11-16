@@ -2,11 +2,12 @@ import ChatCard from "@/components/ChatCard";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import useChats from "@/hooks/useChats";
+import ListSkeleton from "@/components/skeletons/ListSkeleton";
 
 function Chats() {
   const { chats, loading, error } = useChats();
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <ListSkeleton />;
   if (error) return <div>Error: {error}</div>;
 
   return (

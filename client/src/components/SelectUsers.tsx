@@ -31,21 +31,17 @@ const SelectUsers = ({
   };
 
   return (
-    <div
-      className={`flex flex-col gap-2 overflow-y-auto max-h-80 ${className ?? ""}`}
-    >
+    <div className={`overflow-y-auto flex flex-col gap-2 ${className ?? ""}`}>
       {users.map((user) => (
-        <div
-          className="mx-1 grid grid-cols-[min-content_1fr] gap-x-2 items-center"
-          key={user.id}
-        >
+        <div className="ml-1 relative" key={user.id}>
           <Checkbox
+            className="absolute top-1/2 -translate-y-1/2"
             id={`checkbox-${user.id}`}
             checked={selectedUserIds.includes(user.id)}
             onCheckedChange={(checked) => handleCheck(checked, user.id)}
           />
           <Label htmlFor={`checkbox-${user.id}`}>
-            <Card className="flex items-center cursor-pointer">
+            <Card className="ml-6 flex items-center cursor-pointer md:ml-8">
               <CardContent className="flex items-center gap-2 p-1">
                 <Link to={`/profile/${user.id}`} onClick={handleAvatarClick}>
                   <Avatar>

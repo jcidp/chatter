@@ -72,12 +72,12 @@ const NewGroup = () => {
   if (loading) return <NewGroupSkeleton />;
 
   return (
-    <div className="flex-grow flex flex-col overflow-y-hidden">
+    <div className="flex flex-col overflow-y-hidden">
       <h2 className="text-2xl">New group</h2>
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="flex-grow flex flex-col overflow-y-hidden"
+          className="flex flex-col overflow-y-hidden"
         >
           <FormField
             control={form.control}
@@ -112,7 +112,6 @@ const NewGroup = () => {
             Add users to the group... ({selectedUserIds.length})
           </p>
           <SelectUsers
-            className="flex-grow"
             users={users}
             selectedUserIds={selectedUserIds}
             setSelectedUserIds={setSelectedUserIds}

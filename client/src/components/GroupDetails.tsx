@@ -90,7 +90,7 @@ const GroupDetails = ({
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <SelectUsers
-                className="my-4"
+                className="my-4 max-h-64"
                 users={users}
                 selectedUserIds={selectedUserIds}
                 setSelectedUserIds={setSelectedUserIds}

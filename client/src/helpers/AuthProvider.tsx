@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { Login, SignUp, User } from "../types";
 import ApiClient from "./ApiClient";
+import { Loader2Icon } from "lucide-react";
 
 interface AuthContextType {
   user: User | null;
@@ -17,7 +18,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const initAuth = async () => {
@@ -33,7 +34,7 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           localStorage.removeItem("auth_token");
         }
       }
-      setIsLoading(false);
+      setLoading(false);
     };
     initAuth();
   }, []);
@@ -66,9 +67,12 @@ const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     updateUser,
   };
 
-  if (isLoading) {
-    return <div>Auth Loading...</div>;
-  }
+  if (loading)
+    return (
+      <div className="w-screen h-screen grid place-content-center">
+        <Loader2Icon className="w-20 h-20 animate-spin" />
+      </div>
+    );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

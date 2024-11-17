@@ -31,10 +31,12 @@ const SelectUsers = ({
   };
 
   return (
-    <div className={`grid gap-y-2 ${className ?? ""}`}>
+    <div
+      className={`flex flex-col gap-2 overflow-y-auto max-h-80 ${className ?? ""}`}
+    >
       {users.map((user) => (
         <div
-          className="grid grid-cols-[min-content_1fr] gap-x-2 items-center"
+          className="mx-1 grid grid-cols-[min-content_1fr] gap-x-2 items-center"
           key={user.id}
         >
           <Checkbox

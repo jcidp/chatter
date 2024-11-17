@@ -5,6 +5,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./components/ui/avatar";
 import { ArrowBigLeft, UserRoundIcon } from "lucide-react";
 import { Button } from "./components/ui/button";
 import { ModeToggle } from "./helpers/ModeToggle";
+import Footer from "./components/Footer";
 
 function App() {
   const { user, logout } = useAuth();
@@ -49,10 +50,11 @@ function App() {
         </div>
       </header>
       <main
-        className={`flex-grow flex flex-col ${location.pathname.startsWith("/chats") ? "overflow-hidden" : "overflow-auto"} w-full`}
+        className={`flex-grow flex flex-col ${location.pathname.startsWith("/chats") || location.pathname.startsWith("/new-group") ? "overflow-y-hidden" : "overflow-auto"} w-full`}
       >
         <Outlet />
       </main>
+      <Footer />
     </>
   );
 }

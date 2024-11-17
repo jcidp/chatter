@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import useChat from "@/hooks/useChat";
+import ChatSkeleton from "@/components/skeletons/ChatSkeleton";
 
 const Chat = () => {
   const { id: chatId } = useParams();
@@ -44,7 +45,7 @@ const Chat = () => {
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <ChatSkeleton />;
   if (error) return <div>Error: {error}</div>;
 
   return (

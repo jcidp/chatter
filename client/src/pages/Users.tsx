@@ -1,3 +1,4 @@
+import ListSkeleton from "@/components/skeletons/ListSkeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import ApiClient from "@/helpers/ApiClient";
@@ -7,7 +8,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
 const Users = () => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState<User[]>([]);
   const navigate = useNavigate();
 
@@ -19,7 +20,7 @@ const Users = () => {
       } catch (error) {
         console.log(error);
       } finally {
-        setIsLoading(false);
+        setLoading(false);
       }
     };
     getUsers();
@@ -34,7 +35,7 @@ const Users = () => {
     e.stopPropagation();
   };
 
-  if (isLoading) return <h1>Loading...</h1>;
+  if (loading) return <ListSkeleton />;
 
   return (
     <div>

@@ -13,7 +13,8 @@ class ChatSerializer < ActiveModel::Serializer
     return unless last_message
 
     text = last_message.text || "(Image)"
-    { text: text }.merge last_message&.as_json(only: :created_at) if last_message
+    author = last_message.author.username
+    { text: text, author: author }.merge last_message&.as_json(only: [:created_at, :user_id]) if last_message
   end
 
   def image

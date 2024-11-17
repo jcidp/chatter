@@ -10,7 +10,10 @@ import {
 
 const SignUp = () => {
   return (
-    <main className="flex-1 grid place-content-center">
+    <main className="flex-1 grid place-content-center py-2">
+      <h1 className="text-4xl font-bold text-primary text-center mb-8 w-full">
+        Chatter
+      </h1>
       <Card className="mx-auto max-w-sm">
         <CardHeader>
           <CardTitle className="text-2xl">Sign up</CardTitle>

@@ -1,5 +1,6 @@
 import GroupDetails from "@/components/GroupDetails";
 import ProfileForm from "@/components/ProfileForm";
+import ProfileSkeleton from "@/components/skeletons/ProfileSkeleton";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,15 +19,19 @@ const Profile = () => {
   const [activeInput, setActiveInput] = useState("");
   const [profile, setProfile] = useState<User | null>(null);
   const [groupMembers, setGroupMembers] = useState<User[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!user) return;
+    setLoading(true);
     if (!id || (!isGroup && user.id === +id)) {
       setProfile(user);
+      setLoading(false);
     } else if (!isGroup) {
       const getUser = async () => {
         const user = await ApiClient.getUser(id);
         setProfile(user);
+        setLoading(false);
       };
       getUser();
     } else {
@@ -39,6 +44,7 @@ const Profile = () => {
           avatar: group.photo,
         });
         if (group.members) setGroupMembers(group.members);
+        setLoading(false);
       };
       getGroup();
     }
@@ -117,6 +123,8 @@ const Profile = () => {
         )
         .includes(user?.id)) ||
     (!isGroup && (!id || user?.id === +id));
+
+  if (loading) return <ProfileSkeleton />;
 
   return (
     <div className="flex-grow">

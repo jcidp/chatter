@@ -140,8 +140,8 @@ const Profile = () => {
           </AvatarFallback>
         </Avatar>
         {isEditable && (
-          <Label className="absolute left-1/2 translate-x-10 top-1/2 translate-y-14 md:translate-x-16 md:translate-y-28 bg-blue-400 p-4 rounded-full cursor-pointer">
-            <CameraIcon className="w-7 h-7 md:w-12 md:h-12" />
+          <Label className="absolute left-1/2 translate-x-10 top-1/2 translate-y-14 md:translate-x-16 md:translate-y-28 bg-primary p-4 rounded-full cursor-pointer">
+            <CameraIcon className="w-7 h-7 md:w-12 md:h-12 stroke-primary-foreground" />
             <Input
               className="hidden"
               type="file"

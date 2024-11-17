@@ -20,6 +20,7 @@ import ConfirmationModal from "./ConfirmationModal";
 import { useState } from "react";
 import ApiClient from "@/helpers/ApiClient";
 import { User } from "@/types";
+import { useAuth } from "@/helpers/AuthProvider";
 
 interface GroupDetailsProps {
   groupId?: string;
@@ -37,6 +38,7 @@ const GroupDetails = ({
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUserIds, setSelectedUserIds] = useState<number[]>([]);
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const handleMakeAdmin = async (user_id: number) => {
     if (!groupId) return;
@@ -77,7 +79,7 @@ const GroupDetails = ({
       {isEditable && (
         <AlertDialog>
           <AlertDialogTrigger asChild>
-            <Button className="mb-4" onClick={handleFetchUsers}>
+            <Button className="mb-4 w-full md:w-fit" onClick={handleFetchUsers}>
               + Add members
             </Button>
           </AlertDialogTrigger>
@@ -108,10 +110,10 @@ const GroupDetails = ({
           </AlertDialogContent>
         </AlertDialog>
       )}
-      <div className="grid gap-y-2">
+      <div className="grid gap-y-2 max-h-[50dvh] overflow-y-auto">
         {groupMembers.map((member) => (
           <Card key={member.id} className="w-full">
-            <CardContent className="flex flex-wrap md:grid md:grid-cols-2 items-center gap-x-2 p-2 px-4 md:p-1">
+            <CardContent className="flex flex-wrap md:grid md:grid-cols-[1fr_max-content] items-center p-2 px-4 md:p-1">
               <div className="flex items-center gap-2">
                 <Link to={`/profile/${member.id}`}>
                   <Avatar>
@@ -121,13 +123,20 @@ const GroupDetails = ({
                     </AvatarFallback>
                   </Avatar>
                 </Link>
-                <span>{member.username}</span>
+                <span>
+                  {member.id === user?.id ? "(You)" : member.username}
+                </span>
               </div>
               <div
-                className={`${member.is_admin ? "" : "w-full"} grid grid-cols-2 place-items-center`}
+                className={`ml-auto ${member.is_admin ? "" : "ml-0 grid grid-cols-2 w-full"}`}
               >
                 {member.is_admin && (
-                  <Badge className="my-2 col-span-2">Admin</Badge>
+                  <Badge
+                    variant="secondary"
+                    className="my-2 col-span-2 md:mx-4"
+                  >
+                    Admin
+                  </Badge>
                 )}
                 {isEditable && !member.is_admin && (
                   <>
@@ -153,7 +162,7 @@ const GroupDetails = ({
       <ConfirmationModal
         triggerText="Leave group"
         variant="destructive"
-        className="my-4"
+        className="my-4 w-full md:w-fit"
         onConfirm={handleLeaveGroup}
       />
     </div>

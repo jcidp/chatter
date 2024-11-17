@@ -3,7 +3,8 @@ class Group < ApplicationRecord
   has_many :users, through: :chat
   has_one_attached :photo
 
-  validates :name, presence: true, length: { maximum: 24 }
+  validates :name, presence: true, length: { minimum: 3, maximum: 24 }
+  validates :description, length: { maximum: 80 }
 
   def self.create_with_chat!(name:, description:, admin:, user_ids:)
     ActiveRecord::Base.transaction do

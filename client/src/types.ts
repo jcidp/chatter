@@ -17,11 +17,13 @@ interface ChatI {
 }
 
 interface Message {
+  id: number;
   created_at: string;
   user_id: number;
   chat_id: string;
   text?: string;
   image?: string;
+  author: string;
 }
 
 interface Group {

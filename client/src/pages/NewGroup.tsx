@@ -1,4 +1,5 @@
 import SelectUsers from "@/components/SelectUsers";
+import NewGroupSkeleton from "@/components/skeletons/NewGroupSkeleton";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -9,7 +10,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const NewGroup = () => {
-  const [isLoading, setIsLoading] = useState(true);
+  const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState<User[]>([]);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -24,7 +25,7 @@ const NewGroup = () => {
       } catch (error) {
         console.log(error);
       } finally {
-        setIsLoading(false);
+        setLoading(false);
       }
     };
     getUsers();
@@ -51,7 +52,7 @@ const NewGroup = () => {
     if (response) navigate(`/chats/${response.id}`);
   };
 
-  if (isLoading) return <h1>Loading...</h1>;
+  if (loading) return <NewGroupSkeleton />;
 
   return (
     <div>

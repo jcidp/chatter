@@ -27,12 +27,10 @@ const signUpFormSchema = loginFormSchema
   .extend({
     username: z
       .string()
-      .min(3, "Username must be at least 3 characters long")
-      .max(24, "Username must be at most 24 characters long"),
-    password: z.string().min(8, "Password must be at least 8 characters long"),
-    confirmPassword: z
-      .string()
-      .min(8, "Password must be at least 8 characters long"),
+      .min(3, "Must be at least 3 characters long")
+      .max(24, "Must be at most 24 characters long"),
+    password: z.string().min(8, "Must be at least 8 characters long"),
+    confirmPassword: z.string().min(8, "Must be at least 8 characters long"),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
@@ -113,6 +111,7 @@ const AccountForm = ({ type }: AccountFormProps) => {
                 <FormControl>
                   <Input
                     {...field}
+                    autoFocus
                     type="email"
                     placeholder="example@email.com"
                   />
@@ -134,7 +133,7 @@ const AccountForm = ({ type }: AccountFormProps) => {
                     <Input {...field} placeholder="johndoe123" />
                   </FormControl>
                   <FormDescription hideOnError={true}>
-                    Username must be between 3 and 24 characters
+                    Must be between 3 and 24 characters
                   </FormDescription>
                   <FormMessage />
                 </FormItem>
@@ -154,7 +153,7 @@ const AccountForm = ({ type }: AccountFormProps) => {
                 </FormControl>
                 {type === "signUp" && (
                   <FormDescription hideOnError={true}>
-                    Password must be at least 8 characters long
+                    Must be at least 8 characters long
                   </FormDescription>
                 )}
                 <FormMessage />

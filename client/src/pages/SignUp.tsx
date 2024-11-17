@@ -15,7 +15,7 @@ const SignUp = () => {
         <CardHeader>
           <CardTitle className="text-2xl">Sign up</CardTitle>
           <CardDescription>
-            Enter your information to create an account
+            Enter your info to create an account
           </CardDescription>
         </CardHeader>
         <CardContent>

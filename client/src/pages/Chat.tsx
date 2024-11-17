@@ -12,7 +12,6 @@ import { useAuth } from "@/helpers/AuthProvider";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
-  ImageIcon,
   ImageMinusIcon,
   ImagePlusIcon,
   SendIcon,

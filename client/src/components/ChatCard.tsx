@@ -3,7 +3,13 @@ import { Card, CardContent, CardHeader } from "./ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Link, useNavigate } from "react-router-dom";
 import { formatTimestamp } from "@/helpers/helpers";
-import { UserRoundIcon, UsersRoundIcon } from "lucide-react";
+import {
+  ArrowDownIcon,
+  ArrowUpIcon,
+  UserRoundIcon,
+  UsersRoundIcon,
+} from "lucide-react";
+import { useAuth } from "@/helpers/AuthProvider";
 
 const ChatCard = ({
   id,
@@ -14,6 +20,7 @@ const ChatCard = ({
   type,
 }: ChatI) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const handleCardClick = () => {
     navigate(`/chats/${id}`);
@@ -53,10 +60,26 @@ const ChatCard = ({
           )}
         </div>
       </CardHeader>
-      <CardContent className="p-4 pt-0 grid">
+      <CardContent className="p-4 pt-0 grid grid-cols-[max-content_min-content_1fr] items-center">
         {last_message ? (
           <>
-            <p className="truncate">{last_message?.text} </p>
+            {type !== "group" ? (
+              last_message.user_id === user?.id ? (
+                <ArrowUpIcon className="inline stroke-muted-foreground" />
+              ) : (
+                <ArrowDownIcon className="inline stroke-muted-foreground" />
+              )
+            ) : (
+              <span></span>
+            )}
+            <span className="mx-1 text-muted-foreground max-w-16 truncate">
+              {type === "group"
+                ? last_message.user_id === user?.id
+                  ? "You:"
+                  : `${last_message.author}:`
+                : ""}
+            </span>
+            <span className="truncate">{last_message?.text}</span>
           </>
         ) : (
           <p>(No messages yet)</p>

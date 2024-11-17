@@ -12,7 +12,7 @@ interface ChatI {
   image: string;
   profile_id: number;
   messages?: Message[];
-  last_message?: Omit<Message, "user_id">;
+  last_message?: Message;
   type: "profile" | "group";
 }
 

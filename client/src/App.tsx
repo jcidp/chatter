@@ -28,7 +28,7 @@ function App() {
             )}
           </div>
           <Link to="/">
-            <h1 className="text-xl font-bold text-blue-700 inline">Chatter</h1>
+            <h1 className="text-xl font-bold text-primary inline">Chatter</h1>
           </Link>
           <div className="w-28 flex justify-end gap-4">
             <ModeToggle />

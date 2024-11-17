@@ -11,7 +11,7 @@ const Footer = () => {
           <div className="border-b border-primary scale-x-0 origin-left transition-transform duration-500 group-hover:scale-x-100"></div>
         </span>
         <svg
-          className="w-8 inline fill-primary"
+          className="w-8 inline fill-foreground"
           id="gh-logo"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"

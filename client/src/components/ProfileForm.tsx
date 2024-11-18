@@ -82,6 +82,12 @@ const ProfileForm = ({
     }
   };
 
+  const closeInputOnEsc = (
+    e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    if (e.code === "Escape") handleActivateInput("");
+  };
+
   return (
     <>
       <span>
@@ -113,9 +119,19 @@ const ProfileForm = ({
                 <FormItem className="mt-2 mb-4">
                   <FormControl>
                     {fieldType === "username" ? (
-                      <Input {...field} autoFocus className="text-base" />
+                      <Input
+                        {...field}
+                        autoFocus
+                        onKeyDown={closeInputOnEsc}
+                        className="text-base"
+                      />
                     ) : (
-                      <Textarea {...field} autoFocus className="text-base" />
+                      <Textarea
+                        {...field}
+                        autoFocus
+                        onKeyDown={closeInputOnEsc}
+                        className="text-base"
+                      />
                     )}
                   </FormControl>
                   <FormMessage />

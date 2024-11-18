@@ -99,7 +99,11 @@ const Chat = () => {
                 </CardHeader>
                 <CardContent className="p-0">
                   {message.image && (
-                    <img src={message.image} alt={message.text} />
+                    <img
+                      className="my-2"
+                      src={message.image}
+                      alt={message.text}
+                    />
                   )}
                   <span>{message.text}</span>
                 </CardContent>

@@ -10,7 +10,7 @@ import {
 
 const Login = () => {
   return (
-    <main className="flex-1 grid place-content-center py-2">
+    <main className="flex-1 w-full grid grid-cols-1 place-content-center py-2">
       <h1 className="text-4xl font-bold text-primary text-center mb-8 w-full">
         Chatter
       </h1>

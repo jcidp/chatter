@@ -83,11 +83,11 @@ const Profile = () => {
     setActiveInput(type === activeInput ? "" : type);
   };
 
-  const handleSubmit: HandleProfileSubmit = async ({ username, bio }) => {
-    if (username) {
+  const handleSubmit: HandleProfileSubmit = async ({ username, bio, name }) => {
+    if (username || name) {
       if (isGroup) {
         if (!id) return;
-        const newGroup = await ApiClient.updateGroup(id, { name: username });
+        const newGroup = await ApiClient.updateGroup(id, { name });
         setProfile((oldProfile) =>
           oldProfile ? { ...oldProfile, username: newGroup.name } : null,
         );

@@ -1,4 +1,6 @@
 class User < ApplicationRecord
+  USERNAME_FORMAT = /\A(?!.*[._-]{2})[a-z0-9][a-z0-9._-]{1,18}[a-z0-9]\z/
+
   has_secure_password
 
   generates_token_for :email_verification, expires_in: 2.days do
@@ -17,7 +19,10 @@ class User < ApplicationRecord
 
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
   validates :password, allow_nil: true, length: { minimum: 8 }
-  validates :username, presence: true, uniqueness: true, length: { minimum: 3, maximum: 24 }
+  validates :username, presence: true, format: {
+    with: USERNAME_FORMAT,
+    message: :invalid_format
+  }, uniqueness: { case_sensitive: false }
   validates :bio, length: { maximum: 80 }
 
   normalizes :email, with: -> { _1.strip.downcase }

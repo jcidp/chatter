@@ -62,6 +62,7 @@ type Login = (loginParams: LoginParams) => Promise<void>;
 interface HandleProfileSubmitParams {
   username?: string;
   bio?: string;
+  name?: string;
 }
 
 type HandleProfileSubmit = (

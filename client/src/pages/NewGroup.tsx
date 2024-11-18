@@ -12,6 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import ApiClient from "@/helpers/ApiClient";
+import { groupFormSchema } from "@/helpers/formSchemas";
 import { Group, User } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
@@ -19,15 +20,7 @@ import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 
-const formSchema = z.object({
-  name: z
-    .string()
-    .min(3, "Must be at least 3 characters long")
-    .max(24, "Must be at most 24 characters long"),
-  description: z.string().max(80, "Must be at most 80 characters long"),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+type FormValues = z.infer<typeof groupFormSchema>;
 
 const NewGroup = () => {
   const [loading, setLoading] = useState(true);
@@ -50,7 +43,7 @@ const NewGroup = () => {
   }, []);
 
   const form = useForm<FormValues>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(groupFormSchema),
     defaultValues: {
       name: "",
       description: "",

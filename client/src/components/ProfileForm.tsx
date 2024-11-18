@@ -8,21 +8,16 @@ import { Textarea } from "./ui/textarea";
 import { useEffect } from "react";
 import { AxiosError } from "axios";
 import { HandleProfileSubmit } from "@/types";
-
-const usernameFormSchema = z.object({
-  username: z
-    .string()
-    .min(3, "Must be at least 3 characters long")
-    .max(24, "Must be at most 24 characters long"),
-});
-
-const bioFormSchema = z.object({
-  bio: z.string().max(80, "Must be at most 80 characters long"),
-});
+import {
+  bioFormSchema,
+  groupNameFormSchema,
+  usernameFormSchema,
+} from "@/helpers/formSchemas";
 
 type FormValues =
   | z.infer<typeof usernameFormSchema>
-  | z.infer<typeof bioFormSchema>;
+  | z.infer<typeof bioFormSchema>
+  | z.infer<typeof groupNameFormSchema>;
 
 interface ProfileFormProps {
   type: "user" | "group";
@@ -46,16 +41,27 @@ const ProfileForm = ({
   isEditable,
   handleSubmit,
 }: ProfileFormProps) => {
-  const schema = fieldType === "username" ? usernameFormSchema : bioFormSchema;
+  const schema =
+    fieldType === "username"
+      ? type === "group"
+        ? groupNameFormSchema
+        : usernameFormSchema
+      : bioFormSchema;
+  const mappedDefaultValue =
+    type === "group" && fieldType === "username"
+      ? { name: defaultValue.username }
+      : defaultValue;
+  const mappedFieldType =
+    type === "group" && fieldType === "username" ? "name" : fieldType;
 
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: defaultValue,
+    defaultValues: mappedDefaultValue,
   });
 
   useEffect(() => {
-    form.reset(defaultValue);
-  }, [defaultValue, form]);
+    form.reset(mappedDefaultValue);
+  }, [defaultValue, form, type, fieldType]);
 
   const onSubmit = async (values: FormValues) => {
     try {
@@ -63,7 +69,7 @@ const ProfileForm = ({
     } catch (error) {
       if (error instanceof AxiosError) {
         const messages = error?.response?.data[fieldType];
-        form.setError(fieldType, {
+        form.setError(mappedFieldType, {
           type: "server",
           message: Array.isArray(messages) ? messages[0] : messages,
         });
@@ -102,7 +108,7 @@ const ProfileForm = ({
             />
             <FormField
               control={form.control}
-              name={fieldType}
+              name={mappedFieldType}
               render={({ field }) => (
                 <FormItem className="mt-2 mb-4">
                   <FormControl>

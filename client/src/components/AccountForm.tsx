@@ -17,25 +17,7 @@ import {
 } from "./ui/form";
 import { AxiosError } from "axios";
 import { Alert, AlertDescription } from "./ui/alert";
-
-const loginFormSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-  password: z.string(),
-});
-
-const signUpFormSchema = loginFormSchema
-  .extend({
-    username: z
-      .string()
-      .min(3, "Must be at least 3 characters long")
-      .max(24, "Must be at most 24 characters long"),
-    password: z.string().min(8, "Must be at least 8 characters long"),
-    confirmPassword: z.string().min(8, "Must be at least 8 characters long"),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  });
+import { loginFormSchema, signUpFormSchema } from "@/helpers/formSchemas";
 
 type FormValues = z.infer<typeof signUpFormSchema>;
 
@@ -57,6 +39,7 @@ const AccountForm = ({ type }: AccountFormProps) => {
     resolver: zodResolver(schema),
     defaultValues: {
       email: "",
+      username: "",
       password: "",
       confirmPassword: "",
     },
@@ -89,6 +72,15 @@ const AccountForm = ({ type }: AccountFormProps) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    onChange: (value: string) => void,
+  ) => {
+    if (e.target.value.includes(" ")) return;
+    const lowercaseValue = e.target.value.toLowerCase();
+    onChange(lowercaseValue);
   };
 
   return (
@@ -130,10 +122,17 @@ const AccountForm = ({ type }: AccountFormProps) => {
                 <FormItem>
                   <FormLabel>Username</FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="johndoe123" />
+                    <Input
+                      {...field}
+                      onChange={(e) => handleInputChange(e, field.onChange)}
+                      placeholder="john_doe123"
+                    />
                   </FormControl>
                   <FormDescription hideOnError={true}>
-                    Must be between 3 and 24 characters
+                    <span className="block">
+                      Must be between 3 and 20 characters long
+                    </span>
+                    <span>Valid special characters: . _ -</span>
                   </FormDescription>
                   <FormMessage />
                 </FormItem>

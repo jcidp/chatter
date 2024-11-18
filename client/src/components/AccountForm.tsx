@@ -19,7 +19,7 @@ import { AxiosError } from "axios";
 import { Alert, AlertDescription } from "./ui/alert";
 
 const loginFormSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
+  username: z.string(),
   password: z.string(),
 });
 
@@ -56,7 +56,7 @@ const AccountForm = ({ type }: AccountFormProps) => {
   const form = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
-      email: "",
+      username: "",
       password: "",
       confirmPassword: "",
     },
@@ -104,43 +104,23 @@ const AccountForm = ({ type }: AccountFormProps) => {
         <div className="grid gap-2">
           <FormField
             control={form.control}
-            name="email"
+            name="username"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel>Username</FormLabel>
                 <FormControl>
-                  <Input
-                    {...field}
-                    autoFocus
-                    type="email"
-                    placeholder="example@email.com"
-                  />
+                  <Input {...field} placeholder="johndoe123" />
                 </FormControl>
+                {type === "signUp" && (
+                  <FormDescription hideOnError={true}>
+                    Must be between 3 and 24 characters
+                  </FormDescription>
+                )}
                 <FormMessage />
               </FormItem>
             )}
           />
         </div>
-        {type === "signUp" && (
-          <div className="grid gap-2">
-            <FormField
-              control={form.control}
-              name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Username</FormLabel>
-                  <FormControl>
-                    <Input {...field} placeholder="johndoe123" />
-                  </FormControl>
-                  <FormDescription hideOnError={true}>
-                    Must be between 3 and 24 characters
-                  </FormDescription>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </div>
-        )}
         <div className="grid gap-2">
           <FormField
             control={form.control}

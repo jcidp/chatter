@@ -12,13 +12,13 @@ class Api::SessionsController < ApplicationController
   end
 
   def create
-    if (user = User.authenticate_by(email: params[:email], password: params[:password]))
+    if (user = User.authenticate_by(username: params[:username], password: params[:password]))
       @session = user.sessions.create!
       response.set_header "X-Session-Token", @session.signed_id(expires_in: 30.minutes)
 
       render json: user, include_bio: true, status: :created
     else
-      render json: { root: "Email or password is invalid" }, status: :unauthorized
+      render json: { root: "Username or password is invalid" }, status: :unauthorized
     end
   end
 

@@ -5,20 +5,21 @@ class ApplicationController < ActionController::API
   before_action :authenticate
 
   def fallback_index_html
-    render file: 'public/index.html'
+    render file: "public/index.html"
   end
 
   private
-    def authenticate
-      if session_record = authenticate_with_http_token { |token, _| Session.find_signed(token) }
-        Current.session = session_record
-      else
-        request_http_token_authentication
-      end
-    end
 
-    def set_current_request_details
-      Current.user_agent = request.user_agent
-      Current.ip_address = request.ip
+  def authenticate
+    if (session_record = authenticate_with_http_token { |token, _| Session.find_signed(token) })
+      Current.session = session_record
+    else
+      request_http_token_authentication
     end
+  end
+
+  def set_current_request_details
+    Current.user_agent = request.user_agent
+    Current.ip_address = request.ip
+  end
 end

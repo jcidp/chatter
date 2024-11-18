@@ -47,12 +47,11 @@ interface CableData {
 }
 
 interface LoginParams {
-  email: string;
+  username: string;
   password: string;
 }
 
 interface SignUpParams extends LoginParams {
-  username: string;
   confirmPassword: string;
 }
 

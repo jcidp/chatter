@@ -21,6 +21,8 @@ class Api::ChatsControllerTest < ActionDispatch::IntegrationTest
         type: "profile",
         last_message: {
           text: "MyText",
+          author: @user.username,
+          user_id: @user.id,
           created_at: @user.chats[0].messages&.last&.created_at
         }
       },
@@ -39,18 +41,28 @@ class Api::ChatsControllerTest < ActionDispatch::IntegrationTest
   test "should get show" do
     @chat = chats(:one)
     @chat.messages.create(text: "last message", user_id: @user.id)
-    @messages = @chat.messages.sorted.as_json(only: [:text, :user_id, :created_at], include: :image)
     @other_user = users(:john_smith)
+    @messages = @chat.messages.sorted.each_with_index.map do |message, i|
+      {
+        "id" => message.id,
+        "text" => message.text,
+        "user_id" => message.user_id,
+        "chat_id" => message.chat_id,
+        "created_at" => message.created_at.as_json,
+        "image" => nil,
+        "author" => i == 2 ? @other_user.username : @user.username
+      }
+    end
     expected_response = {
-      id: @chat.id,
-      name: @other_user.username,
-      image: nil,
-      profile_id: @other_user.id,
-      type: "profile",
-      messages: @messages
+      "id" => @chat.id,
+      "name" => @other_user.username,
+      "image" => nil,
+      "profile_id" => @other_user.id,
+      "type" => "profile",
+      "messages" => @messages
     }
     get api_chat_url(@chat), headers: default_headers
-    assert_equal expected_response.to_json, @response.body
+    assert_equal expected_response, JSON.parse(@response.body)
   end
 
   test "should create a new chat when it doesn't exist" do

@@ -5,7 +5,6 @@ class Api::RegistrationsController < ApplicationController
     @user = User.new(user_params)
 
     if @user.save
-      send_email_verification
       @session = @user.sessions.create!
       response.set_header "X-Session-Token", @session.signed_id(expires_in: 1.minute)
       render json: @user, status: :created

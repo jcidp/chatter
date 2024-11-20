@@ -142,7 +142,7 @@ const Chat = () => {
           value={text}
           onChange={handleTextChange}
         />
-        <Label>
+        <Label className="cursor-pointer">
           <Input
             className="hidden"
             type="file"

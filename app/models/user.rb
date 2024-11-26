@@ -40,4 +40,26 @@ class User < ApplicationRecord
       only: [:id, :email, :username]
     }.merge(options))
   end
+
+  def setup_welcome_chats
+    ActiveRecord::Base.transaction do
+      bot_id = User.find_by!(username: "chatter_bot").id
+      chat = Chat.create!
+      chat.chat_users.create!(user_id: bot_id)
+      chat.chat_users.create!(user_id: id)
+      send_welcome_messages!(chat, bot_id)
+      Chat.first.chat_users.create!(user_id: id, is_admin: false)
+    end
+  rescue ActiveRecord::ActiveRecordError => e
+    Rails.logger.debug { "Error setting up welcome chats: #{e}" }
+  end
+
+  private
+
+  def send_welcome_messages!(chat, bot_id)
+    chat.messages.create!(text: "Welcome to chatter!", user_id: bot_id)
+    chat.messages.create!(text: "You can start a chat with a single user, like this one!", user_id: bot_id)
+    chat.messages.create!(text: "You can also create a group, like the 'New users group'", user_id: bot_id)
+    chat.messages.create!(text: "Have fun chatting with others!", user_id: bot_id)
+  end
 end

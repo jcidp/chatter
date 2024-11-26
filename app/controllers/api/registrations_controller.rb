@@ -5,8 +5,9 @@ class Api::RegistrationsController < ApplicationController
     @user = User.new(user_params)
 
     if @user.save
+      @user.setup_welcome_chats
       @session = @user.sessions.create!
-      response.set_header "X-Session-Token", @session.signed_id(expires_in: 1.minute)
+      response.set_header "X-Session-Token", @session.signed_id(expires_in: 1.day)
       render json: @user, status: :created
     else
       render json: @user.errors, status: :unprocessable_entity

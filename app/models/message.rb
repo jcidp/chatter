@@ -34,9 +34,7 @@ class Message < ApplicationRecord
     message
   end
 
-  private
-
-  def process_image(image)
+  def self.process_image(image)
     processed_image = ImageProcessing::MiniMagick
                       .source(image)
                       .resize_to_limit(480, 860)

@@ -30,7 +30,7 @@ class Group < ApplicationRecord
   def update_photo!(user:, photo:)
     raise Unauthorized, "Only admins can edit a group" unless admin?(user)
 
-    unless photo.attach(
+    unless self.photo.attach(
       io: process_image(photo),
       filename: photo.original_filename,
       content_type: photo.content_type

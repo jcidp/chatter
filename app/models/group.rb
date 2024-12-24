@@ -73,7 +73,7 @@ class Group < ApplicationRecord
   end
 
   def process_image(image)
-    processed_image = ImageProcessing::MiniMagick
+    processed_image = ImageProcessing::Vips
                       .source(image)
                       .resize_to_fill(360, 360)
                       .convert("jpg")

@@ -13,6 +13,7 @@ amazon:
   secret_access_key: <%= Rails.application.credentials.dig(:aws, :secret_access_key) %>
   region: us-east-2
   bucket: general-learning-bucket
+  retry_limit: 2
 
 # Remember not to checkin your GCS keyfile to a repository
 # google:

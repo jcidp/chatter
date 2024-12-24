@@ -35,7 +35,7 @@ class Message < ApplicationRecord
   end
 
   def self.process_image(image)
-    processed_image = ImageProcessing::MiniMagick
+    processed_image = ImageProcessing::Vips
                       .source(image)
                       .resize_to_limit(480, 860)
                       .convert("jpg")

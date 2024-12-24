@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosResponse } from "axios";
+import axios, { AxiosHeaders, AxiosInstance, AxiosResponse } from "axios";
 import { ChatI, Group, Login, SignUp, User } from "../types";
 import ActionCableManager from "./ActionCableManager";
 
@@ -65,10 +65,12 @@ class ApiClient {
       password_confirmation: signUpParams.confirmPassword,
     });
     console.log("AxiosResponse:", response);
-    const user = response.data;
-    if (!response.headers) throw Error("No headers");
+    if (!(response.headers instanceof AxiosHeaders))
+      throw Error("Invalid headers");
     const token = response.headers.get("X-Session-Token");
+    if (typeof token !== "string") throw Error("Invalid token");
     this.setToken(token);
+    const user = response.data;
     return user;
   }
 
@@ -77,10 +79,12 @@ class ApiClient {
       "/login",
       loginParams,
     );
-    const user = response.data;
-    if (!response.headers) throw Error("No headers");
+    if (!(response.headers instanceof AxiosHeaders))
+      throw Error("Invalid headers");
     const token = response.headers.get("X-Session-Token");
+    if (typeof token !== "string") throw Error("Invalid token");
     this.setToken(token);
+    const user = response.data;
     return user;
   }
 

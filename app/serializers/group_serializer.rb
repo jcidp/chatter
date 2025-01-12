@@ -47,9 +47,11 @@ class GroupSerializer < ActiveModel::Serializer
                rails_blob_path(attachment, only_path: true)
              end
       "http://localhost:3001#{path}"
+    elsif is_variant
+      attachment.processed
+      attachment.url(expires_in: 30.minutes)
     else
-      attachment.processed.url(expires_in: 30.minutes) if is_variant
-      attachment.url(expires_in: 30.minutes) unless is_variant
+      attachment.url(expires_in: 30.minutes)
     end
   end
 end

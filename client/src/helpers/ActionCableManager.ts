@@ -1,6 +1,9 @@
 import { createConsumer, Subscription } from "@rails/actioncable";
 
 const TOKEN_KEY = "auth_token";
+const WS_HOST = import.meta.env.PROD
+  ? "wss://chatter.jcidp.co"
+  : "ws://localhost:3001";
 
 class ActionCableManager {
   private static instance: ActionCableManager;
@@ -32,9 +35,7 @@ class ActionCableManager {
   private connect(token: string) {
     if (token) {
       console.log("Connecting...");
-      this.consumer = createConsumer(
-        `ws://localhost:3001/cable?token=${token}`,
-      );
+      this.consumer = createConsumer(`${WS_HOST}/cable?token=${token}`);
     }
   }
 

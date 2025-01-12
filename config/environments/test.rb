@@ -62,7 +62,4 @@ Rails.application.configure do
 
   # Raise error when a before_action's only/except options reference missing actions
   config.action_controller.raise_on_missing_callback_actions = true
-
-  # For appending it to the images URLs
-  config.x.api_base_url = 'http://localhost:3001'
 end

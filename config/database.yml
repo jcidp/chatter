@@ -82,5 +82,5 @@ test:
 production:
   <<: *default
   database: chatter_production
-  username: chatter
+  username: <%= ENV["DATABASE_USERNAME"] %>
   password: <%= ENV["CHATTER_DATABASE_PASSWORD"] %>

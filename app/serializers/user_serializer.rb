@@ -15,12 +15,14 @@ class UserSerializer < ActiveModel::Serializer
   end
 
   def full_size_avatar
-    "#{Rails.configuration.x.api_base_url}#{rails_blob_path(object.avatar, only_path: true)}"
+    generate_url(object.avatar)
   end
 
   def small_avatar
+    return unless object.avatar.attached?
+
     variant = object.avatar.variant(resize_to_limit: [40, 40])
-    "#{Rails.configuration.x.api_base_url}#{rails_representation_path(variant, only_path: true)}"
+    generate_url(variant, is_variant: true)
   end
 
   def admin?
@@ -33,5 +35,23 @@ class UserSerializer < ActiveModel::Serializer
 
   def include_is_admin?
     instance_options[:chat_id]
+  end
+
+  private
+
+  def generate_url(attachment, is_variant: false)
+    return unless attachment
+
+    if Rails.env.development?
+      path = if is_variant
+               rails_representation_path(attachment, only_path: true)
+             else
+               rails_blob_path(attachment, only_path: true)
+             end
+      "http://localhost:3001#{path}"
+    else
+      attachment.processed.url(expires_in: 30.minutes) if is_variant
+      attachment.url(expires_in: 30.minutes) unless is_variant
+    end
   end
 end

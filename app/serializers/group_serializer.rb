@@ -15,12 +15,14 @@ class GroupSerializer < ActiveModel::Serializer
   end
 
   def full_size_photo
-    "#{Rails.configuration.x.api_base_url}#{rails_blob_path(object.photo, only_path: true)}"
+    generate_url(object.photo)
   end
 
   def small_photo
+    return unless object.photo.attached?
+
     variant = object.photo.variant(resize_to_limit: [40, 40])
-    "#{Rails.configuration.x.api_base_url}#{rails_representation_path(variant, only_path: true)}"
+    generate_url(variant, is_variant: true)
   end
 
   def members
@@ -31,5 +33,23 @@ class GroupSerializer < ActiveModel::Serializer
 
   def include_members?
     instance_options[:include_members]
+  end
+
+  private
+
+  def generate_url(attachment, is_variant: false)
+    return unless attachment
+
+    if Rails.env.development?
+      path = if is_variant
+               rails_representation_path(attachment, only_path: true)
+             else
+               rails_blob_path(attachment, only_path: true)
+             end
+      "http://localhost:3001#{path}"
+    else
+      attachment.processed.url(expires_in: 30.minutes) if is_variant
+      attachment.url(expires_in: 30.minutes) unless is_variant
+    end
   end
 end

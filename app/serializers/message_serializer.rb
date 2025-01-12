@@ -3,7 +3,13 @@ class MessageSerializer < ActiveModel::Serializer
   attributes :id, :text, :user_id, :chat_id, :created_at, :image, :author
 
   def image
-    "#{Rails.configuration.x.api_base_url}#{rails_blob_path(object.image, only_path: true)}" if object.image.attached?
+    return unless object.image.attached?
+
+    if Rails.env.development?
+      "http://localhost:3001#{rails_blob_path(object.image, only_path: true)}"
+    else
+      object.image.url(expires_in: 30.minutes)
+    end
   end
 
   def author

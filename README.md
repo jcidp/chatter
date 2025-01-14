@@ -1,24 +1,56 @@
-# README
+# Chatter
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+A real-time messaging web application built with Rails and React, offering a seamless communication experience similar to WhatsApp.
 
-Things you may want to cover:
+## Live Demo
 
-* Ruby version
+Visit [https://chatter.jcidp.co/] to try out Chatter!
 
-* System dependencies
+### Testing Instructions
+- You can register using any email address (it doesn't need to be real)
+- To test the real-time communication features:
+  - Open the app in an incognito window or different browser
+  - Create a second account
+  - Start chatting to see messages appear instantly!
 
-* Configuration
+## Features
 
-* Database creation
+### Real-time Communication
+- Instant message delivery powered by WebSocket technology
 
-* Database initialization
+### User Management
+- Secure authentication system
+- Customizable user profiles
+- Personal status messages
+- Profile picture upload capabilities
 
-* How to run the test suite
+### Group Messaging
+- Create and manage group conversations
+- Add or remove group members
+- Group admin controls
 
-* Services (job queues, cache servers, search engines, etc.)
+### File Sharing
+- Support for images
+- Secure file upload and storage in S3
 
-* Deployment instructions
+### User Interface
+- Clean and intuitive design
+- Responsive layout for all devices
+- Light and dark theme support
 
-* ...
+## Technology Stack
+
+### Backend
+- Ruby on Rails
+- Action Cable for WebSocket functionality
+- Active Storage for file handling
+- PostgreSQL database
+
+### Frontend
+- React.js
+- WebSocket client integration
+- Modern CSS with responsive design
+- Theme management system
+
+### Deployment
+- Deployed to a VPS

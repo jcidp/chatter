@@ -1,8 +1,23 @@
 # syntax = docker/dockerfile:1
 
+# Frontend build stage
+FROM node:20.17.0-slim as frontend-builder
+
+WORKDIR /frontend
+
+# Copy package files
+COPY package*.json ./
+COPY client/package*.json client/
+
+# Copy the frontend source
+COPY client/ client/
+
+# Build the frontend
+RUN npm run build && \
+    npm run deploy
+
 # Make sure RUBY_VERSION matches the Ruby version in .ruby-version and Gemfile
-ARG RUBY_VERSION=3.3.4
-FROM registry.docker.com/library/ruby:$RUBY_VERSION-slim as base
+FROM registry.docker.com/library/ruby:3.3.4-slim as base
 
 # Rails app lives here
 WORKDIR /rails
@@ -12,7 +27,6 @@ ENV RAILS_ENV="production" \
     BUNDLE_DEPLOYMENT="1" \
     BUNDLE_PATH="/usr/local/bundle" \
     BUNDLE_WITHOUT="development"
-
 
 # Throw-away build stage to reduce size of final image
 FROM base as build
@@ -30,9 +44,11 @@ RUN bundle install && \
 # Copy application code
 COPY . .
 
+# Copy the built frontend from frontend-builder
+COPY --from=frontend-builder /frontend/public ./public
+
 # Precompile bootsnap code for faster boot times
 RUN bundle exec bootsnap precompile app/ lib/
-
 
 # Final stage for app image
 FROM base
@@ -48,12 +64,12 @@ COPY --from=build /rails /rails
 
 # Run and own only the runtime files as a non-root user for security
 RUN useradd rails --create-home --shell /bin/bash && \
-    chown -R rails:rails db log storage tmp
+    chown -R rails:rails db log storage tmp public
 USER rails:rails
 
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]
 
 # Start the server by default, this can be overwritten at runtime
-EXPOSE 3000
-CMD ["./bin/rails", "server"]
+EXPOSE 3002
+CMD ["./bin/rails", "server", "-p", "3002", "-b", "0.0.0.0"]
